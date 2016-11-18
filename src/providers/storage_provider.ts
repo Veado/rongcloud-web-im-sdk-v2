@@ -12,17 +12,22 @@ module RongIMLib {
         onOutOfQuota(): number;
 
     }
+    /* .en
+     * Dynamically generated key interfaces
+    */
     //动态生成key接口
     export interface ComposeKeyFunc {
         (object: any): string;
     }
 
     export interface VoIPProvider {
-
         /**
          * 设置音频参数
          * @params opt {size:{height:100,width:200},container:'显示 video 容器'}
          */
+        /* .en
+         * set parameters of audio
+        */
         startCall(converType: ConversationType, targetId: string, userIds: string[], mediaType: VoIPMediaType, extra: string, callback: ResultCallback<ErrorCode>): void;
 
         hungupCall(converType: ConversationType, targetId: string, reason: ErrorCode): void;

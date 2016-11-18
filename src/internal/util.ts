@@ -1,4 +1,6 @@
-
+/* .en
+ * object name mapping
+*/
 //objectname映射
 var typeMapping: { [s: string]: any } = {
     "RC:TxtMsg": "TextMessage",
@@ -28,6 +30,9 @@ var typeMapping: { [s: string]: any } = {
     "RC:VCModifyMem": "MemberModifyMessage",
     "RC:CsContact": "CustomerContact"
 },
+    /* .en
+     * custom message type
+    */
     //自定义消息类型
     registerMessageTypeMapping: { [s: string]: any } = {},
     HistoryMsgType: { [s: number]: any } = {
@@ -44,6 +49,9 @@ module RongIMLib {
     /**
      * 通道标识类
      */
+    /* .en
+     * class of channels identifier
+    */
     export class Transportations {
         static _TransportType: string = Socket.WEBSOCKET;
     }
@@ -94,6 +102,9 @@ module RongIMLib {
     /**
      * 会话工具类。
      */
+    /* .en
+     * class of session tools
+    */
     export class ConversationMap {
         conversationList: Array<Conversation>;
         constructor() {
@@ -124,6 +135,9 @@ module RongIMLib {
          * [replace 替换会话]
          * 会话数组存在的情况下调用add方法会是当前会话被替换且返回到第一个位置，导致用户本地一些设置失效，所以提供replace方法
          */
+        /* .en
+         * [replace session]
+        */
         replace(conversation: Conversation) {
             for (let i = 0, len = this.conversationList.length; i < len; i++) {
                 if (this.conversationList[i].conversationType === conversation.conversationType && this.conversationList[i].targetId === conversation.targetId) {
@@ -144,7 +158,13 @@ module RongIMLib {
     /**
      * 工具类
      */
+    /* .en
+     * class of tools
+    */
     export class MessageUtil {
+        /* .en
+         * adapt SSL
+        */
         //适配SSL
         static schemeArrs: Array<any> = [["http", "ws"], ["https", "wss"]];
         static sign: any = { converNum: 1, msgNum: 1, isMsgStart: true, isConvStart: true };
@@ -158,6 +178,9 @@ module RongIMLib {
         /**
          *4680000 为localstorage最小容量5200000字节的90%，超过90%将删除之前过早的存储
          */
+        /* .en
+         * 4680000 for localstorage minimum capacity, more than will delete early before storage
+        */
         static checkStorageSize(): boolean {
             return JSON.stringify(localStorage).length < 4680000;
         }
@@ -196,6 +219,9 @@ module RongIMLib {
         static isArray(obj: any) {
             return Object.prototype.toString.call(obj) == "[object Array]";
         }
+        /* .en
+         * traverse array only
+        */
         //遍历，只能遍历数组
         static forEach(arr: any, func: any) {
             if ([].forEach) {
@@ -233,6 +259,9 @@ module RongIMLib {
             }
             return timestamp;
         }
+        /* .en
+         * function of message parser
+        */
         //消息转换方法
         static messageParser(entity: any, onReceived?: any, offlineMsg?: boolean): any {
             var message: Message = new Message(), content: any = entity.content, de: any, objectName: string = entity.classname, val: any, isUseDef = false;
@@ -249,7 +278,9 @@ module RongIMLib {
                 de = val;
                 isUseDef = true;
             }
-
+            /* .en
+             * mapping to message object
+            */
             //映射为具体消息对象
             if (objectName in typeMapping) {
                 var str = "new RongIMLib." + typeMapping[objectName] + "(de)";
@@ -267,6 +298,9 @@ module RongIMLib {
                 message.content = new UnknownMessage({ content: de, objectName: objectName });
                 message.messageType = "UnknownMessage";
             }
+            /* .en
+             * set message object base on entry
+            */
             //根据实体对象设置message对象
             message.sentTime = MessageUtil.int64ToTimestamp(entity.dataTime);
             message.senderUserId = entity.fromUserId;

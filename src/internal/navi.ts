@@ -3,8 +3,14 @@ module RongIMLib {
         static Endpoint: any = new Object;
         constructor() {
             window.getServerEndpoint = function(x: any) {
+                /* .en
+                 * assignment field of server from navigation to CookieHelper,because the flash wigdet neet use decodeURIComponent
+                */
                 //把导航返回的server字段赋值给CookieHelper._host，因为flash widget需要使用 decodeURIComponent
                 RongIMClient._cookieHelper._host = Navigation.Endpoint.host = x["server"];
+                /* .en
+                 * set current user id used by comet only
+                */
                 //设置当前用户 Id 只有 comet 使用。
                 Navigation.Endpoint.userId = x["userId"];
                 if (x["voipCallInfo"]) {
@@ -12,6 +18,9 @@ module RongIMLib {
                     RongIMClient._memoryStore.voipStategy = callInfo.strategy;
                     RongIMClient._cookieHelper.setItem("voipStrategy", callInfo.strategy);
                 }
+                /* .en
+                 * replace local navigation information
+                */
                 //替换本地存储的导航信息
                 var temp = RongIMClient._cookieHelper.getItemKey("navi");
                 temp !== null && RongIMClient._cookieHelper.removeItem(temp);
@@ -20,6 +29,9 @@ module RongIMLib {
         }
         connect(appId?: string, token?: string, callback?: any) {
             var oldAppId = RongIMClient._cookieHelper.getItem("appId");
+            /* .en
+             * clear all data by local if appid and local storage is not the same
+            */
             //如果appid和本地存储的不一样，清空所有本地存储数据
             if (oldAppId && oldAppId != appId) {
                 RongIMClient._cookieHelper.clearItem();
@@ -37,6 +49,10 @@ module RongIMLib {
         }
         getServerEndpoint(_token: string, _appId: string, _onsuccess?: any, _onerror?: any, unignore?: any) {
             if (unignore) {
+                /* .en
+                 * According to the token to generate MD5 intercept 8-16 subscript data with local storage of navigation information
+                 * If the information and the last channel types, does not perform navi request, connect to the server with local storage of navigation information
+                */
                 //根据token生成MD5截取8-16下标的数据与本地存储的导航信息进行比对
                 //如果信息和上次的通道类型都一样，不执行navi请求，用本地存储的导航信息连接服务器
                 var naviStr = md5(_token).slice(8, 16),
@@ -54,13 +70,25 @@ module RongIMLib {
                     return;
                 }
             }
+            /* .en
+             * navigation information
+            */
             //导航信息，切换Url对象的key进行线上线下测试操作
             var Url: any = {
+                /* .en
+                 * The test environment
+                */
                 //测试环境
                 "navUrl-Debug": RongIMLib.MessageUtil.schemeArrs[RongIMLib.RongIMClient.schemeType][0] + "://119.254.111.49:9100/",
+                /* .en
+                 * The online environment
+                */
                 //线上环境
                 "navUrl-Release": RongIMLib.MessageUtil.schemeArrs[RongIMLib.RongIMClient.schemeType][0] + "://nav.cn.ronghub.com/"
             }, xss = document.createElement("script");
+            /* .en
+             * josnp request
+            */
             //进行jsonp请求
             xss.src = Url["navUrl-Release"] + (RongIMClient._memoryStore.global["WEB_XHR_POLLING"] ? "cometnavi.js" : "navi.js") + "?appId=" + _appId + "&token=" + encodeURIComponent(_token) + "&" + "callBack=getServerEndpoint&t=" + (new Date).getTime();
             document.body.appendChild(xss);

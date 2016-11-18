@@ -32,6 +32,12 @@ module RongIMLib {
          * @param startTime   起始时间 格式 HH:MM:SS。
          * @param spanMinutes 间隔分钟数 0 &lt; spanMins &lt; 1440。
          */
+        /* .en
+         * get notification successfully during no disturbing
+         *
+         * @param startTime   start time format HH:MM:SS。
+         * @param spanMinutes time span 0 &lt; spanMins &lt; 1440。
+         */
         onSuccess(startTime: string, spanMinutes: number): void;
     }
 

@@ -2,6 +2,9 @@ module RongIMLib {
     export class DBUtil {
         private db: any;
         userId: string;
+        /* .en
+         * incoming current user id
+        */
         //RongIMClint.init 时候执行，传入当前登录人的Id
         init(userId: string): boolean {
             var me = this, isInit = false;

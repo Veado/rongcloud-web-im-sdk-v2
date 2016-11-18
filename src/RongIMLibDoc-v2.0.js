@@ -1,9 +1,19 @@
 /**@overview 融云 RongCloud Web SDK API 开发文档 2.0.0*/
+/* .en
+ * @overview IMaster Web SDK API 2.0.0
+*/
 /** @global */
+/* .en @global */
 /**
  * 消息通道强制设置为长链接方式，默认为web socket->xhr-polling层层降级方式.设置方式为window.WEB_XHR_POLLING=true;
  * @example
  * //在引入RongIMLib.js之前加入如下代码：
+ * <script>window["WEB_XHR_POLLING"] = true</script>
+ */
+/* .en
+ * Long message channel force is set to the link, the default for web socket - > XHR - polling layers of relegation. Set the way to the window. The WEB_XHR_POLLING = true;
+ * @example
+ * //insert the following codes before reference RongIMLib.js：
  * <script>window["WEB_XHR_POLLING"] = true</script>
  */
 var WEB_XHR_POLLING = true;
@@ -14,6 +24,10 @@ var WEB_XHR_POLLING = true;
  *RongIMClient对象，web SDK 核心处理类；SDK 上所有的方法、对象、属性、模块都是依附于该对象。
  * @constructor
  */
+/* .en
+ *RongIMClient object，web SDK core class
+ * @constructor
+ */
 function RongIMClient() {
   /**
    * schemeType 选择连接方式
@@ -22,13 +36,26 @@ function RongIMClient() {
    * 若改变连接方式此属性必须在RongIMClient.init之前赋值
    * RongIMLib.RongIMClient.schemeType = RongIMLib.ConnectionChannel.HTTP。
    */
+  /* .en
+   * schemeType select connect type
+   * SSL need set schemeType为ConnectionChannel.HTTPS
+   * HTTP or WS need set schemeType为ConnectionChannel.HTTP(default)
+   * the property have to assignment before the connect type changed
+   * RongIMLib.RongIMClient.schemeType = RongIMLib.ConnectionChannel.HTTP。
+   */
   RongIMClient.schemeType = RongIMLib.ConnectionChannel.HTTP;
   /**
    * 自定消息存储变量。
    */
+  /* .en
+   * variable of custom messages 
+   */
   RongIMClient.RegisterMessage = {};
   /**
    * 自消息类型，接收消息用到。
+   */
+  /* .en
+   * message type for receive message
    */
   RongIMClient.MessageType = {
     TextMessage:"TextMessage",
@@ -53,6 +80,12 @@ function RongIMClient() {
  * @example
  * var rongClient = RongIMClient.getInstance();
  */
+/* .en
+ * get RongIMClient instance
+ * need to execute init function to initialize the SDK
+ * @example
+ * var rongClient = RongIMClient.getInstance();
+ */
 RongIMClient.getInstance = function() {
   if (!RongIMClient._appKey) {
     throw new Error("Not yet instantiated RongIMClient");
@@ -63,6 +96,11 @@ RongIMClient.getInstance = function() {
  * 初始化 SDK，在整个应用全局只需要调用一次。
  * @param  {string} appKey  开发者后台申请的 AppKey，用来标识应用
  * @param {object} dataAccessProvider 必须是DataAccessProvider的实例
+ */
+/* .en
+ * initialize the SDK，call once only
+ * @param  {string} appKey  mark of app
+ * @param {object} dataAccessProvider have to instance of DataAccessProvider
  */
 RongIMClient.init = function(appKey, dataAccessProvider) {};
 /**
@@ -100,6 +138,11 @@ RongIMClient.init = function(appKey, dataAccessProvider) {};
         }
   });
  */
+/* .en
+ * connect to server,auto reconnect when disconnect by SDK
+ * @param  {string}   token   
+ * @param  {object}  callback 
+*/
 RongIMClient.connect = function(token, callback) {
     RongIMLib.CheckParam.getInstance().check(["string", "object"], "connect", true);
     RongIMClient.bridge = RongIMLib.Bridge.getInstance();
@@ -116,6 +159,9 @@ RongIMClient.connect = function(token, callback) {
             }
         }
     });
+    /* .en
+     * Circulation set up to monitor events, additional after emptying storage event data
+    */
     //循环设置监听事件，追加之后清空存放事件数据
     for (var i = 0, len = RongIMClient._memoryStore.listenerList.length; i < len; i++) {
         RongIMClient.bridge["setListener"](RongIMClient._memoryStore.listenerList[i]);
@@ -135,6 +181,10 @@ RongIMClient.connect = function(token, callback) {
  * 	//重连失败
  * }
  * });
+ */
+ /* .en
+ * reconnect after connected
+ * @param {object} callback 
  */
 RongIMClient.reconnect = function(callback) {
   RongIMClient.bridge.reconnect(callback);
@@ -210,6 +260,13 @@ RongIMClient.getInstance().sendMessage('convertype','targetId', msg, null, {
             }
         });
  */
+ /* .en
+ * register message type
+ * @param {string}  messageType 
+ * @param {string}  objectName 
+ * @param {MessageTag}  messageTag 
+ * @param {string|array}  messageContent ["name","age"]。
+ */
 RongIMClient.registerMessageType = function(messageType, objectName, messageTag,  messageContent) {
   if (!messageType) {
       throw new Error("messageType can't be empty,postion -> registerMessageType");
@@ -246,6 +303,15 @@ RongIMClient.registerMessageType = function(messageType, objectName, messageTag,
  *  }
  * });
  */
+/* .en
+ * listener of connect status
+ * @param  {object} listener 
+ * @example
+ * RongIMClient.getInstance().setConnectionStatusListener({
+ *  onChanged:function(status){
+ *  }
+ * });
+ */
 RongIMClient.setConnectionStatusListener = function(listener) {
   if (RongIMClient.bridge) {
     RongIMClient.bridge.setListener(listener);
@@ -263,6 +329,10 @@ RongIMClient.setConnectionStatusListener = function(listener) {
  *  }
  * });
  */
+/* .en
+ * listener of receive message
+ * @param {object} listener   * @example
+ */
 RongIMClient.setOnReceiveMessageListener = function(listener) {
   if (RongIMClient.bridge) {
     RongIMClient.bridge.setListener(listener);
@@ -275,11 +345,19 @@ RongIMClient.setOnReceiveMessageListener = function(listener) {
  * @example
  * RongIMClient.getInstance().disconnect();
  */
+/* .en
+ * disconnect
+ * @example
+ * RongIMClient.getInstance().disconnect();
+ */
 RongIMClient.prototype.disconnect = function() {
   RongIMClient.bridge.disconnect();
 };
 /**
  * 清理所有连接相关的变量并关闭连接，执行此方法后，reconnect执行将返回异常。
+ */
+/* .en
+ * Clean up all the relevant variables and close connections, execute this method, after the reconnect abnormal returns.
  */
 RongIMClient.prototype.logout = function() {
   RongIMClient.bridge.disconnect();
@@ -292,6 +370,13 @@ RongIMClient.prototype.logout = function() {
  * console.log(connectStatus);
  * => 已连接（实时的连接状态，不一定是已连接）
  */
+/* .en
+ * get current status of connection
+ * @example
+ * var connectStatus = RongIMClient.getInstance().getCurrentConnectionStatus();
+ * console.log(connectStatus);
+ * => connected
+ */
 RongIMClient.prototype.getCurrentConnectionStatus = function() {
   return RongIMLib.Bridge._client.channel.connectionStatus;
 };
@@ -302,6 +387,13 @@ RongIMClient.prototype.getCurrentConnectionStatus = function() {
  * console.log(connectChannel);
  * => WebSocket （正在使用的通道，websocket或者xhrpolling）
  */
+/* .en
+ * get current channel of connection
+ * @example
+ * var connectChannel = RongIMClient.getInstance().getConnectionChannel();
+ * console.log(connectChannel);
+ * => WebSocket （useing channel，websocket or xhrpolling）
+*/
 RongIMClient.prototype.getConnectionChannel = function() {
   if (RongIMLib.Transports._TransportType == RongIMLib.Socket.XHR_POLLING) {
     return RongIMLib.ConnectionChannel.XHR_POLLING;
@@ -315,6 +407,13 @@ RongIMClient.prototype.getConnectionChannel = function() {
  * var userId = RongIMClient.getInstance().getCurrentUserId();
  * console.log(userId);
  * => 当前登录人的Id
+ */
+/* .en
+ * get currently UserId。
+ * @example
+ * var userId = RongIMClient.getInstance().getCurrentUserId();
+ * console.log(userId);
+ * => currently userid
  */
 RongIMClient.prototype.getCurrentUserId = function() {
   return RongIMLib.Bridge._client.userId;
@@ -332,6 +431,10 @@ RongIMClient.prototype.getCurrentUserId = function() {
  *   	}
  * });
  */
+/* .en
+ * get current user information 
+ * @param  {ResultCallback<UserInfo>} callback 
+*/
 RongIMClient.prototype.getCurrentUserInfo = function(callback) {
   RongIMLib.CheckParam.getInstance().check(["object"], "getCurrentUserInfo");
   this.getUserInfo(RongIMLib.Bridge._client.userId, callback);
@@ -350,6 +453,11 @@ RongIMClient.prototype.getCurrentUserInfo = function(callback) {
  *   	}
  * });
  */
+/* .en
+ * get user information
+ * @param  {string}                   userId 
+ * @param  {ResultCallback<UserInfo>} callback  
+*/
 RongIMClient.prototype.getUserInfo = function(userId, callback) {
   RongIMLib.CheckParam.getInstance().check(["string", "object"],
     "getUserInfo");
@@ -371,6 +479,10 @@ RongIMClient.prototype.getUserInfo = function(userId, callback) {
  * 获取本地时间与服务器时间，单位为毫秒。
  * @param {object} callback  获取的回调，返回服务器时间。
  */
+/* .en
+ * get local time and server time,unit : ms
+ * @param {object} callback  获取的回调，返回服务器时间。
+ */
 RongIMClient.prototype.getDeltaTime = function(callback) {
     callback.onSuccess(RongIMClient._memoryStore.deltaTime);
 };
@@ -389,6 +501,12 @@ RongIMClient.prototype.getDeltaTime = function(callback) {
  *    }
  *  });
  */
+/* .en
+ * clear history in local discussion
+ * @param {number} conversationType  
+ * @param {string} targetId  
+ * @param {object} callback  
+*/
 RongIMClient.prototype.clearMessages = function(conversationType, targetId,
   callback) {
   RongIMClient._dataAccessProvider.clearMessages(conversationType, targetId,
@@ -409,6 +527,12 @@ RongIMClient.prototype.clearMessages = function(conversationType, targetId,
  *    }
  *  });
  */
+/* .en
+ * clear unread message in local discussion
+ * @param {number} conversationType  
+ * @param {string} targetId  
+ * @param {object} callback  
+*/
 RongIMClient.prototype.clearMessagesUnreadStatus = function(conversationType,
   targetId, callback) {
   RongIMClient._dataAccessProvider.updateMessages(conversationType, targetId,
@@ -428,6 +552,13 @@ RongIMClient.prototype.clearMessagesUnreadStatus = function(conversationType,
  *    }
  *  });
  */
+/* .en
+ * delete one or more message in local discussion
+ * @param {number} conversationType  
+ * @param {string} targetId  
+ * @param {array}  messageIds  
+ * @param {object} callback 
+*/
 RongIMClient.prototype.deleteMessages = function(conversationType, targetId,
   messageIds, callback) {
   RongIMClient._dataAccessProvider.removeMessage(conversationType, targetId,
@@ -450,6 +581,14 @@ RongIMClient.prototype.deleteMessages = function(conversationType, targetId,
  *   }
  * });
  */
+/* .en
+ * send message 
+ * @param  {ConversationType}        conversationType  
+ * @param  {string}                  targetId          
+ * @param  {MessageContent}          messageContent    
+ * @param  {SendMessageCallback}     sendCallback
+ * @param  {ResultCallback<Message>} resultCallback    
+*/
 RongIMClient.prototype.sendMessage = function(conversationType, targetId,messageContent, sendCallback, resultCallback, pushContent, pushData) {
    RongIMLib.CheckParam.getInstance().check(["number", "string", "object", "object"], "sendMessage");
     if (!RongIMLib.Bridge._client.channel.socket.socket.connected) {
@@ -521,6 +660,11 @@ RongIMClient.prototype.sendMessage = function(conversationType, targetId,message
  * }
  * });
  */
+/* .en
+ * send text message 
+ * @param  {string}                  content         
+ * @param  {ResultCallback<Message>} resultCallback  
+*/
 RongIMClient.prototype.sendTextMessage = function(conversationType, targetId,
   content, resultCallback) {
   var msgContent = RongIMLib.TextMessage.obtain(content);
@@ -541,6 +685,11 @@ RongIMClient.prototype.sendTextMessage = function(conversationType, targetId,
  * }
  * });
  */
+/* .en
+ * send local message  
+ * @param  {MessageContent}   message         
+ * @param  {object}  resultCallback   
+*/
 RongIMClient.prototype.sendLocalMessage = function (message, callback) {
     RongIMLib.CheckParam.getInstance().check(["object", "object"], "sendLocalMessage");
     RongIMClient._dataAccessProvider.updateMessage(message);
@@ -563,6 +712,14 @@ RongIMClient.prototype.sendLocalMessage = function (message, callback) {
  *   }
  * });
  */
+/* .en
+ * insert message 
+ * @param  {ConversationType}        conversationType   
+ * @param  {string}                  targetId           
+ * @param  {string}                  senderUserId       
+ * @param  {MessageContent}          content           
+ * @param  {ResultCallback<Message>} callback          
+*/
 RongIMClient.prototype.insertMessage = function(conversationType, targetId,
   senderUserId, content, callback) {
   RongIMClient._dataAccessProvider.addMessage(conversationType, targetId,
@@ -585,6 +742,14 @@ RongIMClient.prototype.insertMessage = function(conversationType, targetId,
  *  }
  * });
  */
+/* .en
+ * get history messages 
+ * @param  {ConversationType}          conversationType  
+ * @param  {string}                    targetId          
+ * @param  {number|null}               pullMessageTime   
+ * @param  {number}                    count             
+ * @param  {ResultCallback<Message[]>} callback          
+*/
 RongIMClient.prototype.getHistoryMessages = function(conversationType, targetId,
   timestamp, count, callback) {
   RongIMLib.CheckParam.getInstance().check(["number", "string",
@@ -623,6 +788,21 @@ RongIMClient.prototype.getHistoryMessages = function(conversationType, targetId,
  *  }
  * });
  */
+/**
+ * pull message history on server
+ * circulat pull,for example
+ * condition：message count 45，pull 20 every time
+ * the first time pull 20，hasMsg is true。
+ * the second time pull 20，hasMsg is true。
+ * the third time pull 5，hasMsg is false。
+ * the fourth time pull 0，hasMsg is false。
+ * the fourth time：repeat first time pull
+ * @param  {ConversationType}          conversationType  
+ * @param  {string}                    targetId          
+ * @param  {number|null}               pullMessageTime   
+ * @param  {number}                    count             
+ * @param  {ResultCallback<Message[]>} callback          
+*/
 RongIMClient.prototype.getRemoteHistoryMessages = function(conversationType,
   targetId, timestamp, count, callback) {
   RongIMLib.CheckParam.getInstance().check(["number", "string",
@@ -678,6 +858,12 @@ RongIMClient.prototype.getRemoteHistoryMessages = function(conversationType,
  *  });
  *
  */
+/* .en
+ * hasRemoteUnreadMessages whether has message with unreceived
+ * @param  {string}          appkey   appkey
+ * @param  {string}          token   token
+ * @param  {ConnectCallback} callback 返回值，参数回调
+*/
 RongIMClient.prototype.hasRemoteUnreadMessages = function(token, callback) {
   var xss = null;
   window.RCcallback = function(x) {
@@ -707,6 +893,10 @@ RongIMClient.prototype.hasRemoteUnreadMessages = function(token, callback) {
  *  }
  * });
  */
+/* .en
+ * get total unread count 
+ * @param  {ConnectCallback} callback 
+*/
 RongIMClient.prototype.getTotalUnreadCount = function(callback) {
   RongIMClient._dataAccessProvider.getTotalUnreadCount(callback);
 };
@@ -723,6 +913,11 @@ RongIMClient.prototype.getTotalUnreadCount = function(callback) {
  *  }
  * });
  */
+/* .en
+ * get conversation unread count
+ * @param  {ResultCallback<number>} callback              
+ * @param  {ConversationType[]}     ...conversationTypes  
+*/
 RongIMClient.prototype.getConversationUnreadCount = function(conversationTypes,
   callback) {
   RongIMClient._dataAccessProvider.getConversationUnreadCount(
@@ -741,6 +936,11 @@ RongIMClient.prototype.getConversationUnreadCount = function(conversationTypes,
  *  }
  * });
  */
+/* .en
+ * get unread count
+ * @param  {ConversationType} conversationType  
+ * @param  {string}           targetId          
+*/
 RongIMClient.prototype.getUnreadCount = function(conversationType, targetId,
   callback) {
   RongIMClient._dataAccessProvider.getUnreadCount(conversationType, targetId,
@@ -751,6 +951,14 @@ RongIMClient.prototype.getUnreadCount = function(conversationType, targetId,
  * @param  {ConversationType}        conversationType 会话类型
  * @param  {string}                  targetId         目标Id
  * @param  {ResultCallback<boolean>} callback         返回值，参数回调
+ * @example
+ * RongIMClient.getInstance().clearTextMessageDraft("conversationType","targetId");
+ */
+/* .en
+ * clear specifically textmessage and draft
+ * @param  {ConversationType}        conversation type 
+ * @param  {string}                  target id 
+ * @param  {ResultCallback<boolean>} callback         
  * @example
  * RongIMClient.getInstance().clearTextMessageDraft("conversationType","targetId");
  */
@@ -766,6 +974,14 @@ RongIMClient.prototype.clearTextMessageDraft = function(conversationType,
  * @param  {ConversationType}       conversationType 会话类型
  * @param  {string}                 targetId         目标Id
  * @param  {ResultCallback<string>} callback         返回值，参数回调
+ * @example
+ *   var darf = RongIMClient.getInstance().getTextMessageDraft("conversationType", "targetId");
+ */
+/* .en
+ * get textmessage and draft
+ * @param  {ConversationType}       conversation type 
+ * @param  {string}                 target id      
+ * @param  {ResultCallback<string>} callback     
  * @example
  *   var darf = RongIMClient.getInstance().getTextMessageDraft("conversationType", "targetId");
  */
@@ -785,6 +1001,15 @@ RongIMClient.prototype.getTextMessageDraft = function(conversationType,
  * @param  {string}                  targetId         目标Id
  * @param  {string}                  value            草稿值
  * @param  {ResultCallback<boolean>} callback         返回值，参数回调
+ * @example
+ * RongIMClient.getInstance().saveTextMessageDraft("conversationType", "targetId", "草稿内容");
+ */
+/* .en
+ * save draft
+ * @param  {ConversationType}        conversation type 
+ * @param  {string}                  target id         
+ * @param  {string}                  value            
+ * @param  {ResultCallback<boolean>} callback         
  * @example
  * RongIMClient.getInstance().saveTextMessageDraft("conversationType", "targetId", "草稿内容");
  */
@@ -811,11 +1036,20 @@ RongIMClient.prototype.saveTextMessageDraft = function(conversationType,
    *     }
    * });
    */
+  /* .en
+   * clear count of unread message in local discussion
+   * @param  {ConversationType}        conversationType  
+   * @param  {string}                  targetId          
+   * @param  {ResultCallback<boolean>} callback          
+  */
   RongIMClient.prototype.clearUnreadCount = function (conversationType, targetId, callback) {
       RongIMClient._dataAccessProvider.clearUnreadCount(conversationType, targetId, callback);
   };
 /**
  * 清除会话列表
+ */
+/* .en
+ * clear conversations list
  */
 RongIMClient.prototype.clearConversations = function(callback) {
   var conversationTypes = [];
@@ -851,6 +1085,12 @@ RongIMClient.prototype.clearConversations = function(callback) {
  *   }
  * });
  */
+/* .en
+ * get conversation 
+ * @param  {ConversationType}             conversationType  
+ * @param  {string}                       targetId         
+ * @param  {ResultCallback<Conversation>} callback          
+*/
 RongIMClient.prototype.getConversation = function(conversationType, targetId,
   callback) {
   RongIMLib.CheckParam.getInstance().check(["number", "string", "object"],
@@ -874,6 +1114,11 @@ RongIMClient.prototype.getConversation = function(conversationType, targetId,
  *  },null);
  *
  */
+/* .en
+ * pull discussion list from local
+ * @param  {ResultCallback} callback  
+ * @param {array} conversationTypes  
+*/
 RongIMClient.prototype.getConversationList = function(callback,conversationTypes) {
   RongIMLib.CheckParam.getInstance().check(["object","null|array|global|object"], "getConversationList");
   var me = this;
@@ -897,6 +1142,10 @@ RongIMClient.prototype.getConversationList = function(callback,conversationTypes
  *    }
  *  },null);
  */
+/* .en
+ * pull discussion list from server
+ * @param  {ResultCallback} callback  
+*/
 RongIMClient.prototype.getRemoteConversationList = function(callback,conversationTypes) {
   var conversationTypes = [];
   for (var _i = 1; _i < arguments.length; _i++) {
@@ -936,6 +1185,12 @@ RongIMClient.prototype.getRemoteConversationList = function(callback,conversatio
  *    }
  *  });
  */
+/* .en
+ * delete discussion list from local and server
+ * @param  {ConversationType}   conversationType  
+ * @param  {string}   targetId         
+ * @param  {ResultCallback} callback         
+*/
 RongIMClient.prototype.removeConversation = function(conversationType, targetId,
   callback) {
   RongIMLib.CheckParam.getInstance().check(["number", "string", "object"],
@@ -966,6 +1221,12 @@ RongIMClient.prototype.removeConversation = function(conversationType, targetId,
  * @param  {string}   targetId        目标Id
  * @param  {ResultCallback} callback        返回值，函数回调
  */
+/* .en
+ * set conversation to top
+ * @param  {ConversationType}   conversationType 
+ * @param  {string}   targetId         
+ * @param  {ResultCallback} callback         
+ */
 RongIMClient.prototype.setConversationToTop = function(conversationType,
   targetId, callback) {
   RongIMLib.CheckParam.getInstance().check(["number", "string", "object"],
@@ -988,6 +1249,12 @@ RongIMClient.prototype.setConversationToTop = function(conversationType,
  *   }
  * });
  */
+/* .en
+ * add to discussion
+ * @param  {string}            discussionId  
+ * @param  {array}          userIdList    
+ * @param  {OperationCallback} callback      
+*/
 RongIMClient.prototype.addMemberToDiscussion = function(discussionId,
   userIdList, callback) {
   RongIMLib.CheckParam.getInstance().check(["string", "array", "object"],
@@ -1020,6 +1287,12 @@ RongIMClient.prototype.addMemberToDiscussion = function(discussionId,
  * });
  *
  */
+/* .en
+ * create discussion
+ * @param  {string}                   name        
+ * @param  {string[]}                 userIdList  
+ * @param  {CreateDiscussionCallback} callback    
+*/
 RongIMClient.prototype.createDiscussion = function(name, userIdList, callback) {
   RongIMLib.CheckParam.getInstance().check(["string", "array", "object"],
     "createDiscussion");
@@ -1058,6 +1331,11 @@ RongIMClient.prototype.createDiscussion = function(name, userIdList, callback) {
  *   }
  * });
  */
+/* .en
+ * get discussion information
+ * @param  {string}                     discussionId  
+ * @param  {ResultCallback<Discussion>} callback      
+*/
 RongIMClient.prototype.getDiscussion = function(discussionId, callback) {
   RongIMLib.CheckParam.getInstance().check(["string", "object"],
     "getDiscussion");
@@ -1080,6 +1358,11 @@ RongIMClient.prototype.getDiscussion = function(discussionId, callback) {
  *   }
  * });
  */
+/* .en
+ * quit discussion
+ * @param  {string}            discussionId  
+ * @param  {OperationCallback} callback      
+*/
 RongIMClient.prototype.quitDiscussion = function(discussionId, callback) {
   RongIMLib.CheckParam.getInstance().check(["string", "object"],
     "quitDiscussion");
@@ -1103,6 +1386,12 @@ RongIMClient.prototype.quitDiscussion = function(discussionId, callback) {
  *   }
  * });
  */
+/* .en
+ * remove member from discussion
+ * @param  {string}            discussionId  
+ * @param  {string}            userId        
+ * @param  {OperationCallback} callback      
+*/
 RongIMClient.prototype.removeMemberFromDiscussion = function(discussionId,
   userId, callback) {
   RongIMLib.CheckParam.getInstance().check(["string", "string", "object"],
@@ -1127,6 +1416,12 @@ RongIMClient.prototype.removeMemberFromDiscussion = function(discussionId,
  *   }
  * });
  */
+/* .en
+ * set discussion invite status
+ * @param  {string}                 discussionId  
+ * @param  {DiscussionInviteStatus} status        
+ * @param  {OperationCallback}      callback      
+*/
 RongIMClient.prototype.setDiscussionInviteStatus = function(discussionId,
   status, callback) {
   RongIMLib.CheckParam.getInstance().check(["string", "number", "object"],
@@ -1158,6 +1453,12 @@ RongIMClient.prototype.setDiscussionInviteStatus = function(discussionId,
  *   }
  * });
  */
+/* .en
+ * set discussion name
+ * @param  {string}            discussionId  
+ * @param  {string}            name          
+ * @param  {OperationCallback} callback      
+*/
 RongIMClient.prototype.setDiscussionName = function(discussionId, name,
   callback) {
   RongIMLib.CheckParam.getInstance().check(["string", "string", "object"],
@@ -1182,6 +1483,12 @@ RongIMClient.prototype.setDiscussionName = function(discussionId, name,
  *   }
  * });
  */
+/* .en
+ * join group
+ * @param  {string}            groupId    
+ * @param  {string}            groupName  
+ * @param  {OperationCallback} callback   
+*/
 RongIMClient.prototype.joinGroup = function(groupId, groupName, callback) {
   RongIMLib.CheckParam.getInstance().check(["string", "string", "object"],
     "joinGroup");
@@ -1207,6 +1514,11 @@ RongIMClient.prototype.joinGroup = function(groupId, groupName, callback) {
  *   }
  * });
  */
+/* .en
+ * quit group
+ * @param  {string}            groupId   
+ * @param  {OperationCallback} callback  
+*/
 RongIMClient.prototype.quitGroup = function(groupId, callback) {
   RongIMLib.CheckParam.getInstance().check(["string", "object"], "quitGroup");
   var modules = new Modules.LeaveChannelInput();
@@ -1229,6 +1541,12 @@ RongIMClient.prototype.quitGroup = function(groupId, callback) {
  *   }
  * });
  */
+/* .en
+ * join chatroom
+ * @param  {string}            chatroomId    
+ * @param  {number}            messageCount     
+ * @param  {OperationCallback} callback      
+*/
 RongIMClient.prototype.joinChatRoom = function(chatroomId, messageCount,
   callback) {
   RongIMLib.CheckParam.getInstance().check(["string", "number", "object"],
@@ -1285,6 +1603,11 @@ RongIMClient.prototype.joinChatRoom = function(chatroomId, messageCount,
  *  }
  *});
  */
+/* .en
+ * quit chatroom
+ * @param  {string}            chatroomId  
+ * @param  {OperationCallback} callback    
+*/
 RongIMClient.prototype.quitChatRoom = function(chatroomId, callback) {
   RongIMLib.CheckParam.getInstance().check(["string", "object"],
     "quitChatRoom");
@@ -1306,6 +1629,10 @@ RongIMClient.prototype.quitChatRoom = function(chatroomId, callback) {
  *  }
  *});
  */
+/* .en
+ * get public service list from server
+ * @param  {object} callback    
+*/
 RongIMClient.prototype.getRemotePublicServiceList = function(callback) {
   var modules = new Modules.PullMpInput(),
     self = this;
@@ -1342,6 +1669,10 @@ RongIMClient.prototype.getRemotePublicServiceList = function(callback) {
  *   	}
  * });
  */
+/* .en
+ * get public service list from local
+ * @param  {ResultCallback<PublicServiceProfile[]>} callback 
+*/
 RongIMClient.prototype.getPublicServiceList = function(callback) {
   RongIMLib.CheckParam.getInstance().check(["object"], "getPublicServiceList");
   callback.onSuccess(RongIMClient._memoryStore.publicServiceMap.publicServiceList);
@@ -1591,6 +1922,10 @@ RongIMClient.prototype.removeFromBlacklist = function(userId, callback) {
  * TextMessage 文本消息类
  * @constructor
  */
+/* .en
+ * TextMessage 
+ * @constructor
+ */
 function TextMessage(message) {
   this.messageName = "TextMessage";
   if (arguments.length == 0) {
@@ -1601,19 +1936,33 @@ function TextMessage(message) {
   /**
    * 消息内容。
    */
+  /* .en
+   * message content
+   */
   this.content = message.content;
   /**
    * 附加信息。
    */
+  /* .en
+   * extra mesasage
+   */
   this.extra = message.extra;
   /**
    * 用户信息。
+   */
+  /**
+   * user information
    */
   this.userInfo = message.userInfo;
 }
 /**
  * 生成TextMessage对象
  * @param  {string} text 消息内容
+ * @return {TextMessage}
+ */
+/* .en
+ * create TextMessage Object
+ * @param  {string} text 
  * @return {TextMessage}
  */
 TextMessage.obtain = function(text) {
@@ -1626,6 +1975,10 @@ TextMessage.obtain = function(text) {
  * VoiceMessage 声音消息类
  * @constructor
  */
+/* .en
+ * VoiceMessage class of voice message
+ * @constructor
+ */
 function VoiceMessage(message) {
   this.messageName = "VoiceMessage";
   if (arguments.length == 0) {
@@ -1636,17 +1989,29 @@ function VoiceMessage(message) {
   /**
    * 声音base64码。
    */
+  /* .en
+   * 64bit voice
+   */
   this.content = message.content;
   /**
    * 播放时长。
+   */
+  /* .en
+   * voice duration
    */
   this.duration = message.duration;
   /**
    * 附加信息。
    */
+  /* .en
+   * extra message
+   */
   this.extra = message.extra;
   /**
    * 用户信息。
+   */
+  /* .en
+   * user information
    */
   this.userInfo = message.userInfo;
 }
@@ -1654,6 +2019,12 @@ function VoiceMessage(message) {
  * 生成VoiceMessage对象
  * @param  {string} base64Content base64内容
  * @param  {number} duration      持续时长
+ * @return {VoiceMessage}
+ */
+/* .en
+ * create voice message object
+ * @param  {string} base64Content 
+ * @param  {number} duration      
  * @return {VoiceMessage}
  */
 VoiceMessage.obtain = function(base64Content, duration) {
@@ -1667,6 +2038,10 @@ VoiceMessage.obtain = function(base64Content, duration) {
  * ImageMessage 图片消息类
  * @constructor
  */
+/* .en
+ * ImageMessage class of image message
+ * @constructor
+ */
 function ImageMessage(message) {
   this.messageName = "ImageMessage";
   if (arguments.length == 0) {
@@ -1677,17 +2052,29 @@ function ImageMessage(message) {
   /**
    * 缩略图base64码。
    */
+  /* .en
+   * 64 bit image
+   */
   this.content = message.content;
   /**
    * 服务器图片连接地址。
+   */
+  /* .en
+   * image address on server
    */
   this.imageUri = message.imageUri;
   /**
    * 附加信息。
    */
+  /* .en
+   * extra message
+   */
   this.extra = message.extra;
   /**
    * 用户信息。
+   */
+  /* .en
+   * user information
    */
   this.userInfo = message.userInfo;
 }
@@ -1695,6 +2082,13 @@ function ImageMessage(message) {
  *
  * 生成ImageMesage对象
  * @param  {stirng} content  消息内容base64
+ * @param  {string} imageUri  uri
+ * @return {ImageMessage}
+ */
+/* .en
+ *
+ * create ImageMesage object
+ * @param  {stirng} content  base 64
  * @param  {string} imageUri  uri
  * @return {ImageMessage}
  */
@@ -1726,25 +2120,43 @@ function LocationMessage(message) {
   /**
    * 纬度。
    */
+  /* .en
+   * latiude
+   */
   this.latiude = message.latitude;
   /**
    * 纬度。
+   */
+  /* .en
+   * longitude
    */
   this.longitude = message.longitude;
   /**
    * 位置信息描述。
    */
+  /* .en
+   * position information
+   */
   this.poi = message.poi;
   /**
    * 位置图片。
+   */
+  /* .en
+   * image of position
    */
   this.imgUri = message.imgUri;
   /**
    * 附加信息。
    */
+  /* .en
+   * extra message
+   */
   this.extra = message.extra;
   /**
    * 用户信息。
+   */
+  /* .en
+   * user information
    */
   this.userInfo = message.userInfo;
 }
@@ -1754,6 +2166,14 @@ function LocationMessage(message) {
  * @param  {string} latitude  纬度
  * @param  {string} longitude 经度
  * @param  {string} poi       位置信息描述
+ * @return {LocationMessage}
+ */
+/* .en
+ * create LocationMessage object
+ * @param  {string} imgUri    
+ * @param  {string} latitude  
+ * @param  {string} longitude  
+ * @param  {string} poi        
  * @return {LocationMessage}
  */
 LocationMessage.obtain = function(latitude, longitude, poi, imgUri) {
@@ -1770,6 +2190,11 @@ LocationMessage.obtain = function(latitude, longitude, poi, imgUri) {
  * @constructor
  * @param {object} 消息json对象，格式{"title":"Big News", "content":"I'm Ironman.", "imageUri":"http://p1.cdn.com/fds78ruhi.jpg", extra:""}
  */
+/* .en
+ * RichContentMessage
+ * @constructor
+ * @param {object} message json object，format {"title":"Big News", "content":"I'm Ironman.", "imageUri":"http://p1.cdn.com/fds78ruhi.jpg", extra:""}
+ */
 function RichContentMessage(message) {
   this.messageName = "RichContentMessage";
   if (arguments.length == 0) {
@@ -1780,21 +2205,36 @@ function RichContentMessage(message) {
   /**
    * 消息标题
    */
+  /* .en
+   * message title
+   */
   this.title = message.title;
   /**
    * 消息内容。
+   */
+  /* .en
+   * message content
    */
   this.content = message.content;
   /**
    * 图片资源地址。
    */
+  /* .en
+   * image url
+   */
   this.imageUri = message.imageUri;
   /**
    * 附加信息
    */
+  /* .en
+   * extra message
+   */
   this.extra = message.extra;
   /**
    * 用户信息。
+   */
+  /* .en
+   * user message
    */
   this.userInfo = message.userInfo;
 }
@@ -1803,6 +2243,13 @@ function RichContentMessage(message) {
  * @param  {string} title    消息标题
  * @param  {string} content  消息内容
  * @param  {string} imageUri 图片资源
+ * @return {RichContentMessage}
+ */
+/* .en
+ * create RichContentMessage object
+ * @param  {string} title     
+ * @param  {string} content   
+ * @param  {string} imageUri  
  * @return {RichContentMessage}
  */
 RichContentMessage.obtain = function(title, content, imageUri) {
@@ -1819,6 +2266,12 @@ RichContentMessage.obtain = function(title, content, imageUri) {
  * @param {object} message 消息json对象
  *
  */
+/* .en
+ * UnknownMessage。
+ * @constructor
+ * @param {object} message message json object
+ *
+ */
 function UnknownMessage(message) {
   this.messageName = "UnknownMessage";
   if (arguments.length == 0) {
@@ -1829,10 +2282,17 @@ function UnknownMessage(message) {
   /**
    * 未知消息类型，无法判断其属性，所以直接将对象赋值。
    */
+  /* .en
+   * unknow message type
+   */
   this.message = message;
 }
 /**
  * 公众帐号发送消息类
+ * @constructor
+ */
+/* .en
+ * public account sent message class
  * @constructor
  */
 function PublicServiceCommandMessage(message) {
@@ -1845,23 +2305,40 @@ function PublicServiceCommandMessage(message) {
   /**
    * 消息内容。
    */
+  /* .en
+   * message content
+   */
   this.content = message.content;
   /**
    * 附加信息。
+   */
+  /* .en
+   * extra message
    */
   this.extra = message.extra;
   /**
    * 公众账号按钮对象。
    */
+  /* .en
+   * public account menu object
+   */
   this.menuItem = message.menuItem;
   /**
    * 用户信息。
+   */
+  /* .en
+   * user information
    */
   this.userInfo = message.userInfo;
 }
 /**
  * 生成PublicServiceCommandMessage对象。
  * @param  {PublicServiceMenuItem} item    消息标题
+ * @return {RichContentMessage}
+ */
+/* .en
+ * create PublicServiceCommandMessage object
+ * @param  {PublicServiceMenuItem} item     
  * @return {RichContentMessage}
  */
 PublicServiceCommandMessage.obtain = function(item) {
@@ -1876,6 +2353,10 @@ PublicServiceCommandMessage.obtain = function(item) {
  * 提示条（小灰条）通知消息。
  * @constructor
  */
+/* .en
+ * notice message
+ * @constructor
+ */
 function InformationNotificationMessage(message) {
   this.messageName = "InformationNotificationMessage";
   if (arguments.length == 0) {
@@ -1886,19 +2367,33 @@ function InformationNotificationMessage(message) {
   /**
    * 消息内容。
    */
+  /* .en
+   * message content
+   */
   this.content = message.content;
   /**
    * 附加消息。
    */
+  /* .en
+   * extra message
+   */
   this.extra = message.extra;
   /**
    * 用户信息。
+   */
+  /* .en
+   * user information
    */
   this.userInfo = message.userInfo;
 }
 /**
  * 生成InformationNotificationMessage对象
  * @param  {string} content 消息内容
+ * @return {InformationNotificationMessage}
+ */
+/* .en
+ * create InformationNotificationMessage object
+ * @param  {string} content 
  * @return {InformationNotificationMessage}
  */
 InformationNotificationMessage.obtain = function(content) {
@@ -1927,25 +2422,45 @@ function ContactNotificationMessage(message) {
   /**
    * 操作字符串。
    */
+  /* .en
+   * operation string
+   */
   this.operation = message.operation;
   /**
    * 目标Id。
+   */
+  /* .en
+   * target Id。
    */
   this.targetUserId = message.targetUserId;
   /**
    * 消息内容。
    */
+  /* .en
+   * message content
+   */
   this.content = message.content;
   /**
    * 附加消息。
+   */
+  /* .en
+   * extra message
    */
   this.extra = message.extra;
   /**
    * 用户信息。
    */
+  /* .en
+   * user information
+   */
   this.userInfo = message.userInfo;
   /**
    *同意好友响应。可传入RongIMClient.ContactNotificationMessage对象的setOperation中
+   * @static
+   * @type {string}
+   */
+  /* .en
+   * agree with friend
    * @static
    * @type {string}
    */
@@ -1956,10 +2471,20 @@ function ContactNotificationMessage(message) {
    * @static
    * @type {string}
    */
+  /* .en
+   * refuse friend
+   * @static
+   * @type {string}
+   */
   ContactNotificationMessage.CONTACT_OPERATION_REJECT_RESPONSE =
     "ContactOperationRejectResponse";
   /**
    *加好友请求。可传入RongIMClient.ContactNotificationMessage对象的setOperation中
+   * @static
+   * @type {string}
+   */
+  /* .en
+   * add firend request
    * @static
    * @type {string}
    */
@@ -1972,6 +2497,14 @@ function ContactNotificationMessage(message) {
  * @param  {string} sourceUserId 发起人id
  * @param  {string} targetUserId 目标id
  * @param  {string} message      接受拒绝原因
+ * @return {ContactNotificationMessage}
+ */
+/* .en
+ * create notice message object
+ * @param  {string} operation     
+ * @param  {string} sourceUserId  
+ * @param  {string} targetUserId  
+ * @param  {string} message       
  * @return {ContactNotificationMessage}
  */
 ContactNotificationMessage.obtain = function(operation, sourceUserId,
@@ -1988,6 +2521,10 @@ ContactNotificationMessage.obtain = function(operation, sourceUserId,
  * 其中 operation 为资料通知操作，可以自行定义，data 为操作的数据，extra 可以放置任意的数据内容，也可以去掉此属性。
  * @constructor
  */
+/* .en
+ * Profile Notification Message.
+ * @constructor
+ */
 function ProfileNotificationMessage(message) {
   this.messageName = "ProfileNotificationMessage";
   if (arguments.length == 0) {
@@ -1998,17 +2535,29 @@ function ProfileNotificationMessage(message) {
   /**
    * 操作。
    */
+  /* .en
+   * operation
+   */
   this.operation = message.operation;
   /**
    * 内容。
+   */
+  /* .en
+   * content
    */
   this.data = message.data;
   /**
    * 附加信息。
    */
+  /* .en
+   * extra message
+   */
   this.extra = message.extra;
   /**
    * 用户信息。
+   */
+  /* .en
+   * user information
    */
   this.userInfo = message.userInfo;
 }
@@ -2016,6 +2565,12 @@ function ProfileNotificationMessage(message) {
  * 生成InformationNotificationMessage对象
  * @param  {string} operation 操作
  * @param  {string} operation 内容
+ * @return {ProfileNotificationMessage}
+ */
+/* .en
+ * create InformationNotificationMessage object
+ * @param  {string} operation  
+ * @param  {string} operation  
  * @return {ProfileNotificationMessage}
  */
 ProfileNotificationMessage.obtain = function(operation, data) {
@@ -2028,6 +2583,10 @@ ProfileNotificationMessage.obtain = function(operation, data) {
  * 通用命令通知消息。
  * @constructor
  */
+/* .en
+ * Command Notification Message
+ * @constructor
+ */
 function CommandNotificationMessage(message) {
   this.messageName = "CommandNotificationMessage";
   if (arguments.length == 0) {
@@ -2038,17 +2597,29 @@ function CommandNotificationMessage(message) {
   /**
    * 命令内容。
    */
+  /* .en
+   * content
+   */
   this.data = message.data;
   /**
    * 命令名称。
+   */
+  /* .en
+   * name
    */
   this.name = message.name;
   /**
    * 附加信息。
    */
+  /* .en
+   * extra message
+   */
   this.extra = message.extra;
   /**
    * 用户信息。
+   */
+  /* .en
+   * user information
    */
   this.userInfo = message.userInfo;
 }
@@ -2058,6 +2629,15 @@ function CommandNotificationMessage(message) {
  * var cnm = RongIMLib.CommandNotificationMessage.obtain('命令','去吃饭');
  * @param  {string} name   命令名称
  * @param  {string} data 内容
+ * @return {CommandNotificationMessage}
+ *
+ */
+/* .en
+ * create CommandNotificationMessage object
+ * @example
+ * var cnm = RongIMLib.CommandNotificationMessage.obtain();
+ * @param  {string} name    
+ * @param  {string} data  
  * @return {CommandNotificationMessage}
  *
  */
@@ -2072,6 +2652,10 @@ CommandNotificationMessage.obtain = function(name, data) {
  * 讨论组通知消息类。
  * @constructor
  */
+/* .en
+ * Discussion Notification Message class
+ * @constructor
+ */
 function DiscussionNotificationMessage(message) {
   this.messageName = "DiscussionNotificationMessage";
   if (arguments.length == 0) {
@@ -2082,27 +2666,47 @@ function DiscussionNotificationMessage(message) {
   /**
    * 扩展信息。
    */
+  /* .en
+   * extra message
+   */
   this.extension = message.extension;
   /**
    * 通知类型。
    * 1:加入讨论组 2：退出讨论组 3:讨论组改名 4：讨论组群主T人
    */
+  /* .en
+   * message type
+   * 1:join 2：quite 3:rename 4：kick out
+   */
   this.type = message.type;
   /**
    * 是否接收。
+   */
+  /* .en
+   * receice flag
    */
   this.isHasReceived = message.isHasReceived;
   /**
    * 操作
    */
+  /* .en
+   * operation
+   */
   this.operation = message.operation;
   /**
    * 用户信息。
+   */
+  /* .en
+   * user information
    */
   this.userInfo = message.userInfo;
 }
 /**
  * 消息内容处理抽象类。
+ * @constructor
+ */
+/* .en
+ * message class
  * @constructor
  */
 function MessageContent(data) {
@@ -2112,6 +2716,9 @@ function MessageContent(data) {
 }
 /**
  * 所有消息类会继承并实现此方法，在此不作处理。
+ */
+/* .en
+ * parent class
  */
 MessageContent.obtain = function() {
   throw new Error(
@@ -2138,6 +2745,26 @@ MessageContent.obtain = function() {
   * @param {number} unreadMessageCount    未读消息数量
 
  */
+/*.en
+ * entity of discuss
+ * @constructor
+  * @param {string} conversationTitle          
+  * @param {number} conversationType  
+  * @param {string} draft           
+  * @param {MesssageContent} latestMessage     
+  * @param {string} latestMessageId  
+  * @param {ConversationNotificationStatus} notificationStatus      
+  * @param {string} objectName    
+  * @param {number} receivedTime      
+  * @param {string} senderUserId      
+  * @param {string} senderUserName    
+  * @param {SentStatus} sentStatus     
+  * @param {string} senderPortraitUri      
+  * @param {number} sentTime          
+  * @param {string} targetId      
+  * @param {number} unreadMessageCount     
+
+ */
 function Conversation(conversationTitle, conversationType, draft, isTop,
   latestMessage, latestMessageId, notificationStatus, objectName,
   receivedStatus, receivedTime, senderUserId, senderUserName, sentStatus,
@@ -2146,9 +2773,17 @@ function Conversation(conversationTitle, conversationType, draft, isTop,
    * 会话标题。
    * @type {string}
    */
+  /* .en
+   * title
+   * @type {string}
+   */
   this.conversationTitle = conversationTitle;
   /**
    * 会话类型。
+   * @type {number}
+   */
+  /* .en
+   * type
    * @type {number}
    */
   this.conversationType = conversationType;
@@ -2156,9 +2791,17 @@ function Conversation(conversationTitle, conversationType, draft, isTop,
    * 草稿信息。
    * @type {string}
    */
+  /* .en
+   * draft
+   * @type {string}
+   */
   this.draft = draft;
   /**
    * 是否置顶。
+   * @type {boolean}
+   */
+  /* .en
+   * top flag
    * @type {boolean}
    */
   this.isTop = isTop;
@@ -2166,9 +2809,17 @@ function Conversation(conversationTitle, conversationType, draft, isTop,
    * 最后一条消息。
    * @type {Message}
    */
+  /* .en
+   * last message
+   * @type {Message}
+   */
   this.latestMessage = latestMessage;
   /**
    * 最后一条消息的Id。
+   * @type {string}
+   */
+  /* .en
+   * last message id
    * @type {string}
    */
   this.latestMessageId = latestMessageId;
@@ -2176,9 +2827,17 @@ function Conversation(conversationTitle, conversationType, draft, isTop,
    * 通知状态。
    * @type {string}
    */
+  /* .en
+   * status of notice
+   * @type {string}
+   */
   this.notificationStatus = notificationStatus;
   /**
    * 消息对象名称。
+   * @type {string}
+   */
+  /* .en
+   * name of message object
    * @type {string}
    */
   this.objectName = objectName;
@@ -2186,9 +2845,17 @@ function Conversation(conversationTitle, conversationType, draft, isTop,
    * 消息接受状态。
    * @type {string}
    */
+  /* .en
+   * status of receive
+   * @type {string}
+   */
   this.receivedStatus = receivedStatus;
   /**
    * 消息接收时间。
+   * @type {number}
+   */
+  /* .en
+   * receive time of message
    * @type {number}
    */
   this.receivedTime = receivedTime;
@@ -2196,9 +2863,17 @@ function Conversation(conversationTitle, conversationType, draft, isTop,
    * 发送者Id。
    * @type {string}
    */
+  /* .en
+   * sender Id。
+   * @type {string}
+   */
   this.senderUserId = senderUserId;
   /**
    * 发送者名称。
+   * @type {string}
+   */
+  /* .en
+   * sender name
    * @type {string}
    */
   this.senderUserName = senderUserName;
@@ -2206,13 +2881,25 @@ function Conversation(conversationTitle, conversationType, draft, isTop,
    * 消息发送状态。
    * @type {boolean}
    */
+  /* .en
+   * status of send
+   * @type {boolean}
+   */
   this.sentStatus = sentStatus;
   /**
    * 消息发送时间。
    * @type {number}
    */
+  /* .en
+   * time of send
+   * @type {number}
+   */
   this.sentTime = sentTime;
   /**
+   * 目标Id。
+   * @type {string}
+   */
+  /* .en
    * 目标Id。
    * @type {string}
    */
@@ -2221,15 +2908,26 @@ function Conversation(conversationTitle, conversationType, draft, isTop,
    * 未读消息数。
    * @type {number}
    */
+  /* .en
+   * count of unread message
+   * @type {number}
+   */
   this.unreadMessageCount = unreadMessageCount;
   /**
    * 发送者头像。
+   * @type {string}
+   */
+  /* .en
+   * avatar of sender
    * @type {string}
    */
   this.senderPortraitUri = senderPortraitUri;
 }
 /**
  * 把当前会话置顶。
+ */
+/* .en
+ * set top current discuss
  */
 Conversation.prototype.setTop = function() {
   RongIMLib.RongIMClient._dataAccessProvider.addConversation(this, {
@@ -2246,9 +2944,22 @@ Conversation.prototype.setTop = function() {
   * @param {string} name           讨论组名称
   * @param {string} isOpen       是否打开邀请
  */
+/* .en
+ *entity of Discussion
+ * @constructor
+  * @param {string} creatorId          
+  * @param {array} id  
+  * @param {array} memberIdList  
+  * @param {string} name            
+  * @param {string} isOpen        
+ */
 function Discussion(creatorId, id, memberIdList, name, isOpen) {
   /**
    * 创建人Id。
+   * @type {string}
+   */
+  /* .en
+   * creator Id。
    * @type {string}
    */
   this.creatorId = creatorId;
@@ -2256,9 +2967,17 @@ function Discussion(creatorId, id, memberIdList, name, isOpen) {
    * 讨论组Id。
    * @type {string}
    */
+  /* .en
+   * Id。
+   * @type {string}
+   */
   this.id = id;
   /**
    * 讨论成员。
+   * @type {array}
+   */
+  /* .en
+   * member
    * @type {array}
    */
   this.memberIdList = memberIdList;
@@ -2266,9 +2985,17 @@ function Discussion(creatorId, id, memberIdList, name, isOpen) {
    * 讨论组名称。
    * @type {string}
    */
+  /* .en
+   * name
+   * @type {string}
+   */
   this.name = name;
   /**
    * 讨论组邀请状态。
+   * @type {boolean}
+   */
+  /* .en
+   * open flag
    * @type {boolean}
    */
   this.isOpen = isOpen;
@@ -2280,9 +3007,20 @@ function Discussion(creatorId, id, memberIdList, name, isOpen) {
   * @param {string} name 群组名称
   * @param {string} portraitUri    群组头像
  */
+/* .en
+ * entity of group
+ * @constructor
+ *  @param {string} id 
+  * @param {string} name  
+  * @param {string} portraitUri     
+ */
 function Group(id, name, portraitUri) {
   /**
    * 群组Id
+   * @type {string}
+   */
+  /* .en
+   * Id
    * @type {string}
    */
   this.id = id;
@@ -2290,9 +3028,17 @@ function Group(id, name, portraitUri) {
    * 群组名称
    * @type {string}
    */
+  /* .en
+   * name
+   * @type {string}
+   */
   this.name = name;
   /**
    * 群组头像
+   * @type {string}
+   */
+  /* .en
+   * avatar
    * @type {string}
    */
   this.portraitUri = portraitUri;
@@ -2317,6 +3063,26 @@ function Group(id, name, portraitUri) {
  * @param {string} messageUId     消息唯一Id
  * @param {boolean} hasReceivedByOtherClient     是否是离线消息
  */
+/* .en
+ * eneity of message
+ *
+ * @constructor
+ * @param {MessageContent} content          
+ * @param {ConversationType} conversationType  
+ * @param {string} extra            
+ * @param {string} objectName        
+ * @param {string} messageDirection  
+ * @param {string} messageId         
+ * @param {ReceivedStatus} receivedStatus    
+ * @param {number} receivedTime      
+ * @param {string} senderUserId      
+ * @param {SentStatus} sentStatus     
+ * @param {number} sentTime         
+ * @param {string} targetId          
+ * @param {string} messageType      
+ * @param {string} messageUId      
+ * @param {boolean} hasReceivedByOtherClient      
+ */
 function Message(content, conversationType, extra, objectName, messageDirection,
   messageId, receivedStatus, receivedTime, senderUserId, sentStatus, sentTime,
   targetId, messageType,messageUId,hasReceivedByOtherClient) {
@@ -2324,9 +3090,17 @@ function Message(content, conversationType, extra, objectName, messageDirection,
    *消息内容。
    * @type {MessageContent}
    */
+  /* .en
+   * content
+   * @type {MessageContent}
+   */
   this.content = content;
   /**
    * 会话类型。
+   * @type {ConversationType}
+   */
+  /* .en
+   * type
    * @type {ConversationType}
    */
   this.conversationType = conversationType;
@@ -2334,9 +3108,17 @@ function Message(content, conversationType, extra, objectName, messageDirection,
    *附加消息。
    * @type {string}
    */
+  /* .en
+   * extra message
+   * @type {string}
+   */
   this.extra = extra;
   /**
    *内置消息名称。
+   * @type {string}
+   */
+  /* .en
+   * message object
    * @type {string}
    */
   this.objectName = objectName;
@@ -2344,9 +3126,17 @@ function Message(content, conversationType, extra, objectName, messageDirection,
    * 消息方向。
    * @type {MessageDirection}
    */
+  /* .en
+   * message direction
+   * @type {MessageDirection}
+   */
   this.messageDirection = messageDirection;
   /**
    * 消息Id。
+   * @type {string}
+   */
+  /* .en
+   * message id
    * @type {string}
    */
   this.messageId = messageId;
@@ -2354,9 +3144,17 @@ function Message(content, conversationType, extra, objectName, messageDirection,
    * 消息接收状态。
    * @type {ReceivedStatus}
    */
+  /* .en
+   * received status
+   * @type {ReceivedStatus}
+   */
   this.receivedStatus = receivedStatus;
   /**
    * 消息接收时间
+   * @type {number}
+   */
+  /* .en
+   * received time
    * @type {number}
    */
   this.receivedTime = receivedTime;
@@ -2364,9 +3162,17 @@ function Message(content, conversationType, extra, objectName, messageDirection,
    * 发送者Id
    * @type {string}
    */
+  /* .en
+   * sender Id
+   * @type {string}
+   */
   this.senderUserId = senderUserId;
   /**
    * 消息发送状态。
+   * @type {SentStatus}
+   */
+  /* .en
+   * sent status
    * @type {SentStatus}
    */
   this.sentStatus = sentStatus;
@@ -2374,14 +3180,26 @@ function Message(content, conversationType, extra, objectName, messageDirection,
    * 消息发送时间。
    * @type {number}
    */
+  /* .en
+   * sent time
+   * @type {number}
+   */
   this.sentTime = sentTime;
   /**
    * 目标Id
    * @type {string}
    */
+  /* .en
+   * target Id
+   * @type {string}
+   */
   this.targetId = targetId;
   /**
    * 消息类型
+   * @type {string}
+   */
+  /* .en
+   * message Type
    * @type {string}
    */
   this.messageType = messageType;
@@ -2390,9 +3208,17 @@ function Message(content, conversationType, extra, objectName, messageDirection,
  * 公众号Menu类。
  * @constructor
  */
+/* .en
+ * Public Service Menu Item class
+ * @constructor
+ */
 function PublicServiceMenuItem(id, name, type, sunMenuItems, url) {
   /**
    * 按钮Id
+   * @type {string}
+   */
+  /* .en
+   * Id
    * @type {string}
    */
   this.id = id;
@@ -2400,9 +3226,17 @@ function PublicServiceMenuItem(id, name, type, sunMenuItems, url) {
    * 按钮名称
    * @type {string}
    */
+  /* .en
+   * name
+   * @type {string}
+   */
   this.name = name;
   /**
    * 公众帐号类型
+   * @type {number}
+   */
+  /* .en
+   * type
    * @type {number}
    */
   this.type = type;
@@ -2410,8 +3244,16 @@ function PublicServiceMenuItem(id, name, type, sunMenuItems, url) {
    * 下级menu数组
    * @type {array}
    */
+  /* .en
+   * son menu items
+   * @type {array}
+   */
   this.sunMenuItems = sunMenuItems;
   /**
+   * url
+   * @type {string}
+   */
+  /* .en
    * url
    * @type {string}
    */
@@ -2429,10 +3271,26 @@ function PublicServiceMenuItem(id, name, type, sunMenuItems, url) {
  * @param {Boolean} hasFollowed      是否关注
  * @param {Boolean} isGlobal         是否为默认关注
  */
+/* .en
+ * entity of PublicServiceProfile
+ * @constructor
+ * @param {ConversationType}  conversationType  
+ * @param {string}  introduction      
+ * @param {PublicServiceMenuItem}  menu              
+ * @param {string}  name              
+ * @param {string}  portraitUri       
+ * @param {string}  publicServiceId   
+ * @param {Boolean} hasFollowed       
+ * @param {Boolean} isGlobal          
+ */
 function PublicServiceProfile(conversationType, introduction, menu, name,
   portraitUri, publicServiceId, hasFollowed, isGlobal) {
   /**
    * 公众帐号类型。
+   * @type {number}
+   */
+  /* .en
+   * type
    * @type {number}
    */
   this.conversationType = conversationType;
@@ -2440,9 +3298,17 @@ function PublicServiceProfile(conversationType, introduction, menu, name,
    * 公众帐号描述。
    * @type {string}
    */
+  /* .en
+   * introduction
+   * @type {string}
+   */
   this.introduction = introduction;
   /**
    * 公众帐号菜单。
+   * @type {PublicServiceMenuItem}
+   */
+  /* .en
+   * menu
    * @type {PublicServiceMenuItem}
    */
   this.menu = menu;
@@ -2450,9 +3316,17 @@ function PublicServiceProfile(conversationType, introduction, menu, name,
    * 公众帐号名称。
    * @type {string}
    */
+  /* .en
+   * name
+   * @type {string}
+   */
   this.name = name;
   /**
    * 公众帐号头像。
+   * @type {string}
+   */
+  /* .en
+   * avatar
    * @type {string}
    */
   this.portraitUri = portraitUri;
@@ -2460,14 +3334,26 @@ function PublicServiceProfile(conversationType, introduction, menu, name,
    * 公众Id。
    * @type {string}
    */
+  /* .en
+   * Id。
+   * @type {string}
+   */
   this.publicServiceId = publicServiceId;
   /**
    * 是否关注。
    * @type {string}
    */
+  /* .en
+   * follow flag
+   * @type {string}
+   */
   this.hasFollowed = hasFollowed;
   /**
    * 是否默认关注。
+   * @type {string}
+   */
+  /* .en
+   * defaut follow flag
    * @type {string}
    */
   this.isGlobal = isGlobal;
@@ -2476,9 +3362,17 @@ function PublicServiceProfile(conversationType, introduction, menu, name,
  *用户信息类。
  * @constructor
  */
+/* .en
+ * class of user information
+ * @constructor
+ */
 function UserInfo(userId, name, portraitUri) {
   /**
    * 用户Id
+   * @type {string}
+   */
+  /* .en
+   *  user Id
    * @type {string}
    */
   this.userId = userId;
@@ -2486,9 +3380,17 @@ function UserInfo(userId, name, portraitUri) {
    * 用户名称。
    * @type {string}
    */
+  /* .en
+   * user name
+   * @type {string}
+   */
   this.name = name;
   /**
    * 用户头像。
+   * @type {string}
+   */
+  /* .en
+   * avatar
    * @type {string}
    */
   this.portraitUri = portraitUri;
@@ -2497,14 +3399,24 @@ function UserInfo(userId, name, portraitUri) {
    * @enum
    * @type {number}
    */
+  /* .en
+   * @enum
+   * @type {number}
+   */
   var BlacklistStatus  = {
       /**
        * 在黑名单中。
+       */
+      /* .en
+       * in blacklist
        */
       IN_BLACK_LIST = 0,
 
       /**
        * 不在黑名单中。
+       */
+      /* .en
+       * not in blacklist
        */
       NOT_IN_BLACK_LIST = 1
   };
@@ -2512,13 +3424,23 @@ function UserInfo(userId, name, portraitUri) {
    * @enum
    * @type {number}
    */
+  /* .en
+   * @enum
+   * @type {number}
+   */
   var ConnectionChannel ={
       /**
        * 使用Htpp
        */
+      /* .en
+       * use Htpp
+       */
       HTTP = 0,
         /**
          * 使用Htpps
+         */
+        /* .en
+         *  use Htpps
          */
       HTTPS = 1
   }
@@ -2526,29 +3448,48 @@ function UserInfo(userId, name, portraitUri) {
    * @enum
    * @type {number}
    */
+  /* .en
+   * @enum
+   * @type {number}
+   */
   var ConnectionStatus= {
       /**
        * 连接成功。
+       */
+      /* .en
+       * connect success
        */
       CONNECTED = 0,
 
       /**
        * 连接中。
        */
+      /* .en
+       * connecting
+       */
       CONNECTING = 1,
 
       /**
        * 断开连接。
+       */
+      /* .en
+       * disconnection
        */
       DISCONNECTED = 2,
 
       /**
        * 用户账户在其他设备登录，本机会被踢掉线。
        */
+      /* .en
+       * kick off
+       */
       KICKED_OFFLINE_BY_OTHER_CLIENT = 6,
 
       /**
        * 网络不可用。
+       */
+      /* .en
+       * NETWORK UNAVAILABLE
        */
       NETWORK_UNAVAILABLE = -1
   }
@@ -2556,14 +3497,24 @@ function UserInfo(userId, name, portraitUri) {
    * @enum
    * @type {number}
    */
+  /* .en
+   * @enum
+   * @type {number}
+   */
   var ConversationNotificationStatus ={
       /**
        * 免打扰状态，关闭对应会话的通知提醒。
+       */
+      /* .en
+       * disturb status
        */
       DO_NOT_DISTURB,
 
       /**
        * 提醒。
+       */
+      /* .en
+       * notify
        */
       NOTIFY
   }
@@ -2571,41 +3522,72 @@ function UserInfo(userId, name, portraitUri) {
    * @enum
    * @type {number}
    */
+  /* .en
+   * @enum
+   * @type {number}
+   */
   var ConversationType ={
       /**
+       * none
+       */
+      /* .en
        * none
        */
       NONE = 0,
       /**
        * 私聊
        */
+      /* .en
+       * private
+       */
       PRIVATE = 1,
       /**
        * 讨论组
+       */
+      /* .en
+       * discussion
        */
       DISCUSSION = 2,
       /**
        * 群组
        */
+      /* .en
+       * group
+       */
       GROUP = 3,
       /**
        * 聊天室
+       */
+      /* .en
+       * chat room
        */
       CHATROOM = 4,
       /**
        * 客服
        */
+      /* .en
+       * cuetomer service
+       */
       CUSTOMER_SERVICE = 5,
       /**
        * 系统消息
+       */
+      /* .en
+       * system notice
        */
       SYSTEM = 6,
       /**
        * 应用内公众账号（默认关注）
        */
+      /* .en
+       * default follow public account
+       */
       APP_PUBLIC_SERVICE = 7,
       /**
        * 公众账号（手动关注）
+       */
+      /* .en
+       * piblic account
        */
       PUBLIC_SERVICE = 8
   }
@@ -2613,14 +3595,24 @@ function UserInfo(userId, name, portraitUri) {
    * @enum
    * @type {number}
    */
+  /* .en
+   * @enum
+   * @type {number}
+   */
   var DiscussionInviteStatus = {
       /**
        * 开放邀请。
+       */
+      /* .en
+       * opened
        */
       OPENED = 0,
 
       /**
        * 关闭邀请。
+       */
+      /* .en
+       * closed
        */
       CLOSED = 1
   }
@@ -2628,302 +3620,509 @@ function UserInfo(userId, name, portraitUri) {
    * @enum
    * @type {number}
    */
+  /* .en
+   * @enum
+   * @type {number}
+   */
   var ErrorCode = {
   /**
    * 超时
    */
+  /* .en
+   * timeout
+   */
    TIMEOUT = -1,
       /**
        * 未知原因失败。
+       */
+      /* .en
+       * unknow
        */
       UNKNOWN = -2,
 
       /**
        * 不在讨论组。
        */
+      /* .en
+       * not in discussion
+       */
       NOT_IN_DISCUSSION = 21406,
       /**
        * 加入讨论失败
+       */
+      /* .en
+       * join discussion failed
        */
       JOIN_IN_DISCUSSION = 21407,
       /**
        * 创建讨论组失败
        */
+      /* .en
+       * create discussion failed
+       */
       CREATE_DISCUSSION = 21408,
       /**
        * 设置讨论组邀请状态失败
        */
+      /* .en
+       * set invite failed
+       */
       INVITE_DICUSSION = 21409,
       /**
        * 不在群组。
+       */
+      /* .en
+       * not in group
        */
       NOT_IN_GROUP = 22406,
 
       /**
        * 不在聊天室。
        */
+      /* .en
+       * not in chatroom
+       */
       NOT_IN_CHATROOM = 23406,
       /**
        *获取用户失败
        */
+      /* .en
+       * get user failed
+       */
       GET_USERINFO_ERROR = 23407,
       /**
        * 在黑名单中。
+       */
+      /* .en
+       * in blacklist
        */
       REJECTED_BY_BLACKLIST = 405,
 
       /**
        * 通信过程中，当前 Socket 不存在。
        */
+      /* .en
+       * ner channel invalid。
+       */
       RC_NET_CHANNEL_INVALID = 30001,
 
       /**
        * Socket 连接不可用。
+       */
+      /* .en
+       * Socket unavaliable
        */
       RC_NET_UNAVAILABLE = 30002,
 
       /**
        * 通信超时。
        */
+      /* .en
+       * response timeout
+       */
       RC_MSG_RESP_TIMEOUT = 30003,
 
       /**
        * 导航操作时，Http 请求失败。
+       */
+      /* .en
+       * http request failed
        */
       RC_HTTP_SEND_FAIL = 30004,
 
       /**
        * HTTP 请求失败。
        */
+      /* .en
+       * HTTP request failed
+       */
       RC_HTTP_REQ_TIMEOUT = 30005,
 
       /**
        * HTTP 接收失败。
+       */
+      /* .en
+       * HTTP receice failed
        */
       RC_HTTP_RECV_FAIL = 30006,
 
       /**
        * 导航操作的 HTTP 请求，返回不是200。
        */
+      /* .en
+       * navigation resource error
+       */
       RC_NAVI_RESOURCE_ERROR = 30007,
 
       /**
        * 导航数据解析后，其中不存在有效数据。
+       */
+      /* .en
+       * node not found
        */
       RC_NODE_NOT_FOUND = 30008,
 
       /**
        * 导航数据解析后，其中不存在有效 IP 地址。
        */
+      /* .en
+       * domain not resolve
+       */
       RC_DOMAIN_NOT_RESOLVE = 30009,
 
       /**
        * 创建 Socket 失败。
+       */
+      /* .en
+       * create Scoket failed
        */
       RC_SOCKET_NOT_CREATED = 30010,
 
       /**
        * Socket 被断开。
        */
+      /* .en
+       * Socket disconnected
+       */
       RC_SOCKET_DISCONNECTED = 30011,
 
       /**
        * PING 操作失败。
+       */
+      /* .en
+       * PING failed
        */
       RC_PING_SEND_FAIL = 30012,
 
       /**
        * PING 超时。
        */
+      /* .en
+       * PING timeout
+       */
       RC_PONG_RECV_FAIL = 30013,
       /**
        * 消息发送失败。
+       */
+      /* .en
+       * message send failed
        */
       RC_MSG_SEND_FAIL = 30014,
 
       /**
        * 做 connect 连接时，收到的 ACK 超时。
        */
+      /* .en
+       * ACK timeout
+       */
       RC_CONN_ACK_TIMEOUT = 31000,
 
       /**
        * 参数错误。
+       */
+      /* .en
+       * version error
        */
       RC_CONN_PROTO_VERSION_ERROR = 31001,
 
       /**
        * 参数错误，App Id 错误。
        */
+      /* .en
+       * App Id error
+       */
       RC_CONN_ID_REJECT = 31002,
 
       /**
        * 服务器不可用。
+       */
+      /* .en
+       * server unavailable
        */
       RC_CONN_SERVER_UNAVAILABLE = 31003,
 
       /**
        * Token 错误。
        */
+      /* .en
+       * server unavailable
+       */
       RC_CONN_USER_OR_PASSWD_ERROR = 31004,
 
       /**
        * App Id 与 Token 不匹配。
+       */
+      /* .en
+       * App Id and Token not authoroized
        */
       RC_CONN_NOT_AUTHRORIZED = 31005,
 
       /**
        * 重定向，地址错误。
        */
+      /* .en
+       * redirected error
+       */
       RC_CONN_REDIRECTED = 31006,
 
       /**
        * NAME 与后台注册信息不一致。
+       */
+      /* .en
+       * NAME invalid
        */
       RC_CONN_PACKAGE_NAME_INVALID = 31007,
 
       /**
        * APP 被屏蔽、删除或不存在。
        */
+      /* .en
+       * APP blocked or deleted
+       */
       RC_CONN_APP_BLOCKED_OR_DELETED = 31008,
 
       /**
        * 用户被屏蔽。
+       */
+      /* .en
+       * user blocked
        */
       RC_CONN_USER_BLOCKED = 31009,
 
       /**
        * Disconnect，由服务器返回，比如用户互踢。
        */
+      /* .en
+       * Disconnect
+       */
       RC_DISCONN_KICK = 31010,
 
       /**
        * Disconnect，由服务器返回，比如用户互踢。
+       */
+      /* .en
+       * Disconnect
        */
       RC_DISCONN_EXCEPTION = 31011,
 
       /**
        * 协议层内部错误。query，上传下载过程中数据错误。
        */
+      /* .en
+       * ACK no data
+       */
       RC_QUERY_ACK_NO_DATA = 32001,
 
       /**
        * 协议层内部错误。
+       */
+      /* .en
+       * data incomplete
        */
       RC_MSG_DATA_INCOMPLETE = 32002,
 
       /**
        * 未调用 init 初始化函数。
        */
+      /* .en
+       * client not init
+       */
       BIZ_ERROR_CLIENT_NOT_INIT = 33001,
 
       /**
        * 数据库初始化失败。
+       */
+      /* .en
+       * database init error
        */
       BIZ_ERROR_DATABASE_ERROR = 33002,
 
       /**
        * 传入参数无效。
        */
+      /* .en
+       * parameter error
+       */
       BIZ_ERROR_INVALID_PARAMETER = 33003,
 
       /**
        * 通道无效。
+       */
+      /* .en
+       * channel error
        */
       BIZ_ERROR_NO_CHANNEL = 33004,
 
       /**
        * 重新连接成功。
        */
+      /* .en
+       * reconnect success
+       */
       BIZ_ERROR_RECONNECT_SUCCESS = 33005,
-      /**
+       /**
        * 连接中，再调用 connect 被拒绝。
+       */
+      /* .en
+       * reconnect error
        */
       BIZ_ERROR_CONNECTING = 33006,
       /**
        * 消息漫游服务未开通
        */
+      /* .en
+       * message roaming service unavailable
+       */
       MSG_ROAMING_SERVICE_UNAVAILABLE = 33007,
       /**
        * 群组被禁言
+       */
+      /* .en
+       * forbidden in group
        */
       FORBIDDEN_IN_GROUP = 22408,
       /**
        * 删除会话失败
        */
+      /* .en
+       * remove discussion failed
+       */
       CONVER_REMOVE_ERROR = 34001,
       /**
        *拉取历史消息
+       */
+      /* .en
+       * get history message
        */
       CONVER_GETLIST_ERROR = 34002,
       /**
        * 会话指定异常
        */
+      /* .en
+       * discuss error
+       */
       CONVER_SETOP_ERROR = 34003,
       /**
        * 获取会话未读消息总数失败
+       */
+      /* .en
+       * get count of unread message failed
        */
       CONVER_TOTAL_UNREAD_ERROR = 34004,
       /**
        * 获取指定会话类型未读消息数异常
        */
+      /* .en
+       * get specifically unread message failed
+       */
       CONVER_TYPE_UNREAD_ERROR = 34005,
       /**
        * 获取指定用户ID&会话类型未读消息数异常
        */
+      /* .en
+       * get Ids error
+       */
       CONVER_ID_TYPE_UNREAD_ERROR = 34006,
-      //群组异常信息
       /**
-       *
+       * 群组异常信息
+       */
+      /* .en
+       * group error
        */
       GROUP_SYNC_ERROR = 35001,
       /**
        * 匹配群信息系异常
        */
+      /* .en
+       * group match error
+       */
       GROUP_MATCH_ERROR = 35002,
+
       //聊天室异常
+      /* en
+       * chatroom error
+      */
       /**
        * 加入聊天室Id为空
+       */
+      /* .en
+       * chatroom id isnull
        */
       CHATROOM_ID_ISNULL = 36001,
       /**
        * 加入聊天室失败
        */
+      /* .en
+       * join chatroom failed
+       */
       CHARTOOM_JOIN_ERROR = 36002,
       /**
        * 拉取聊天室历史消息失败
        */
+      /* .en
+       * get history error
+       */
       CHATROOM_HISMESSAGE_ERROR = 36003,
+
       //黑名单异常
+      /* .en
+       * blacklist error
+      */
       /**
        * 加入黑名单异常
+       */
+      /* .en
+       * join blacklist error
        */
       BLACK_ADD_ERROR = 37001,
       /**
        * 获得指定人员再黑名单中的状态异常
        */
+      /* .en
+       * get status error
+       */
       BLACK_GETSTATUS_ERROR = 37002,
       /**
        * 移除黑名单异常
+       */
+      /* .en
+       * remove blacklist error
        */
       BLACK_REMOVE_ERROR = 37003,
       /**
        * 获取草稿失败
        */
+      /* .en
+       * get draf error
+       */
       DRAF_GET_ERROR = 38001,
       /**
        * 保存草稿失败
+       */
+      /* .en
+       * save draf error
        */
       DRAF_SAVE_ERROR = 38002,
       /**
        * 删除草稿失败
        */
+      /* .en
+       * remove draf error
+       */
       DRAF_REMOVE_ERROR = 38003,
       /**
        * 关注公众号失败
        */
+      /* .en
+       * follow public account error
+       */
       SUBSCRIBE_ERROR = 39001
   }
   /**
+   * @enum
+   * @type {number}
+   */
+  /* .en
    * @enum
    * @type {number}
    */
@@ -2932,10 +4131,16 @@ function UserInfo(userId, name, portraitUri) {
       /**
        * 发送消息。
        */
+      /* .en
+       * send message
+       */
       SEND = 1,
 
       /**
        * 接收消息。
+       */
+      /* .en
+       * receive message
        */
       RECEIVE = 2
   }
@@ -2943,9 +4148,16 @@ function UserInfo(userId, name, portraitUri) {
    * @enum
    * @type {number}
    */
+  /* .en
+   * @enum
+   * @type {number}
+   */
   var ReceivedStatus = {
       /**
        * 读取
+       */
+      /* .en
+       * read
        */
       READ = 0x1,
       /**
@@ -2961,14 +4173,24 @@ function UserInfo(userId, name, portraitUri) {
    * @enum
    * @type {number}
    */
+  /* .en
+   * @enum
+   * @type {number}
+   */
   var SearchType = {
       /**
        * 精确。
+       */
+      /* .en
+       * exact
        */
       EXACT = 0,
 
       /**
        * 模糊。
+       */
+      /* .en
+       * fuzzy
        */
       FUZZY = 1
   }
@@ -2976,34 +4198,56 @@ function UserInfo(userId, name, portraitUri) {
    * @enum
    * @type {number}
    */
+  /* .en
+   * @enum
+   * @type {number}
+   */
   var SentStatus  = {
       /**
        * 发送中。
+       */
+      /* .en
+       * sending
        */
       SENDING = 10,
 
       /**
        * 发送失败。
        */
+      /* .en
+       * failed
+       */
       FAILED = 20,
 
       /**
        * 已发送。
+       */
+      /* .en
+       * sent
        */
       SENT = 30,
 
       /**
        * 对方已接收。
        */
+      /* .en
+       * received
+       */
       RECEIVED = 40,
 
       /**
        * 对方已读。
        */
+      /* .en
+       * read
+       */
       READ = 50,
 
       /**
        * 对方已销毁。
+       */
+      /* .en
+       * destroyed
        */
       DESTROYED = 60
   }
@@ -3011,45 +4255,79 @@ function UserInfo(userId, name, portraitUri) {
    * @enum
    * @type {number}
    */
+  /* .en
+   * @enum
+   * @type {number}
+   */
   var ConnectionState = {
       /**
        *不可接受的协议版本
+       */
+      /* .en
+       * unacceptable protocol version
        */
       UNACCEPTABLE_PROTOCOL_VERSION = 1,
       /**
        *服务器不可用
        */
+      /* .en
+       * server unavailable
+       */
       SERVER_UNAVAILABLE = 3,
       /**
        * token无效
+       */
+      /* .en
+       * token incorrect
        */
       TOKEN_INCORRECT = 4,
       /**
        *未认证
        */
+      /* .en
+       * not authorized
+       */
       NOT_AUTHORIZED = 5,
       /**
        *重新获取导航
+       */
+      /* .en
+       * redirect
        */
       REDIRECT = 6,
       /**
        *包名错误
        */
+      /* .en
+       * package error
+       */
       PACKAGE_ERROR = 7,
       /**
        *应用已被封禁或已被删除
+       */
+      /* .en
+       * app block or delete
        */
       APP_BLOCK_OR_DELETE = 8,
       /**
        *用户被封禁
        */
+      /* .en
+       * block
+       */
       BLOCK = 9,
       /**
        * token过期
        */
+      /* .en
+       * token expire
+       */
       TOKEN_EXPIRE = 10,
       /**
        *设备号错误
+       */
+      /* .en
+       * device error
        */
       DEVICE_ERROR = 11
   }

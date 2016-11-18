@@ -3,6 +3,9 @@ module RongIMLib {
     /**
      * 消息基类
      */
+    /* .en
+     * base class of message
+    */
     export class BaseMessage {
         _name = "BaseMessage";
         _header: Header;
@@ -86,6 +89,9 @@ module RongIMLib {
     /**
      *连接消息类型
      */
+    /* .en
+     * connect message
+    */
     export class ConnectMessage extends BaseMessage {
         _name: string = "ConnectMessage";
         CONNECT_HEADER_SIZE = 12;
@@ -188,6 +194,9 @@ module RongIMLib {
     /**
      *连接应答类型
      */
+    /* .en
+     * connect reply message
+    */
     export class ConnAckMessage extends BaseMessage {
         _name: string = "ConnAckMessage";
         status: any;
@@ -279,6 +288,9 @@ module RongIMLib {
     /**
      *断开消息类型
      */
+    /* .en
+     * disconnect message
+    */
     export class DisconnectMessage extends BaseMessage {
         _name: string = "DisconnectMessage";
         status: any;
@@ -323,6 +335,9 @@ module RongIMLib {
     /**
      *请求消息信令
      */
+    /* .en
+     * request message ping
+    */
     export class PingReqMessage extends BaseMessage {
         _name: string = "PingReqMessage";
         constructor(header?: RongIMLib.Header) {
@@ -332,6 +347,9 @@ module RongIMLib {
     /**
      *响应消息信令
      */
+    /* .en
+     * response message ping
+    */
     export class PingRespMessage extends BaseMessage {
         _name: string = "PingRespMessage";
         constructor(header: RongIMLib.Header) {
@@ -341,6 +359,9 @@ module RongIMLib {
     /**
      *封装MesssageId
      */
+    /* .en
+     * packaging messageid
+    */
     export class RetryableMessage extends BaseMessage {
         _name: string = "RetryableMessage";
         messageId: any;
@@ -379,6 +400,10 @@ module RongIMLib {
      *发送消息应答（双向）
      *qos为1必须给出应答（所有消息类型一样）
      */
+    /* .en
+     * reply sent message (bothway)
+     * if qos is 1,it have to reply
+    */
     export class PubAckMessage extends RetryableMessage {
         status: any;
         msgLen: number = 2;
@@ -434,6 +459,9 @@ module RongIMLib {
     /**
      *发布消息
      */
+    /* .en
+     * publish message
+    */
     export class PublishMessage extends RetryableMessage {
         _name = "PublishMessage";
         topic: any;
@@ -490,6 +518,9 @@ module RongIMLib {
         setSyncMsg(x: boolean) {
             this.syncMsg = x;
         }
+        /* .en
+         * whether sync message from other clients
+        */
         //是否是其他端同步过来的消息
         getSyncMsg() {
           return this.syncMsg;
@@ -510,6 +541,9 @@ module RongIMLib {
     /**
      *请求查询
      */
+    /* .en
+     * request query
+    */
     export class QueryMessage extends RetryableMessage {
         topic: any;
         data: any;
@@ -572,6 +606,9 @@ module RongIMLib {
     /**
      *请求查询确认
      */
+    /* .en
+     * confirm request query
+    */
     export class QueryConMessage extends RetryableMessage {
         _name: string = "QueryConMessage";
         constructor(messageId: any) {
@@ -584,6 +621,9 @@ module RongIMLib {
     /**
      *请求查询应答
      */
+    /* .en
+     * reply request query
+    */
     export class QueryAckMessage extends RetryableMessage {
         _name: string = "QueryAckMessage";
         data: any;

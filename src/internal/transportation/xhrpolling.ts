@@ -75,6 +75,11 @@ module RongIMLib {
          * queue 为消息队列，待通道可用发送所有等待消息
          * @param  {string} data [需要传入comet格式数据，此处只负责通讯通道，数据转换在外层处理]
          */
+        /* .en
+         * [send send message，Method:POST]
+         * queue message queue,it could be used as sending all waiting message
+         * @param  {string} data [incoming data that formatted to comet]
+        */
         send(data: any): void {
             var me = this;
             var _send = me.sendxhr = this.requestFactory(Navigation.Endpoint.host + "/websocket" + data.url+ "&pid=" + encodeURIComponent(me.pid), "POST");

@@ -20,6 +20,9 @@ module RongIMLib {
         clearItem(): void {
             localStorage.clear();
         }
+        /* .en
+         * unit : byte
+        */
         //单位：字节
         onOutOfQuota(): number {
             return JSON.stringify(localStorage).length;

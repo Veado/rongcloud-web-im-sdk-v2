@@ -144,15 +144,24 @@ module RongIMLib {
         /**
          * 是否支持高清屏幕
          */
+        /* .en
+         * Whether to support high-definition screens
+        */
         private static pixelRatio: number = parseFloat(window.devicePixelRatio + "") || 1;
         /**
          * 判断是否支持emoji
          */
+        /* .en
+         * Whether to support emoji
+        */
         private static supportEmoji: boolean = false;
 
         /**
          * 初始化CSS
          */
+        /* .en
+         * initialize CSS
+        */
         private static initCSS() {
             if (!document.createStyleSheet) {
                 var head = document.getElementsByTagName("head")[0] || document.createElement("head");
@@ -247,6 +256,10 @@ module RongIMLib {
          * 获取Emoji对象 发送消息使用
          * @param  {string}     name  emoji名称
          */
+        /* .en
+         * get object of Emoji for send message
+         * @param  {string}     name  emoji name
+        */
         static symbolToEmoji(str: string): string {
             var me = this;
             return str.replace(/\[.+?\]/g, function(s) {
@@ -267,6 +280,9 @@ module RongIMLib {
         /**
          * @param  {string} str 字符串
          */
+        /* .en
+         * @param  {string} str string
+        */
         static symbolToHTML(str: string): string {
             var em = this.symbolToEmoji(str);
             return this.emojiToHTML(em);
@@ -275,6 +291,10 @@ module RongIMLib {
          * 转换字符串中的emoji 接收消息使用
          * @param  {string} str      包含emoji的字符串
          */
+        /* .en
+         * change emoji in steing for send message
+         * @param  {string} str      string includ emoji
+        */
         static emojiToHTML(str: string) {
             var me = this;
             str = str.replace(/[\uf000-\uf700]/g, function(em) {
@@ -292,6 +312,9 @@ module RongIMLib {
             });
         }
     }
+    /* .en
+     * Compatible with AMD and CMD
+    */
     //兼容AMD CMD
     if ("function" === typeof require && "object" === typeof module && module && module.id && "object" === typeof exports && exports) {
         module.exports = RongIMEmoji;

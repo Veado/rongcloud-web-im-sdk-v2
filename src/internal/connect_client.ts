@@ -1,3 +1,6 @@
+/* .en
+ * use to connect transport
+*/
 //用于连接通道
 module RongIMLib {
     export enum Qos {
@@ -57,6 +60,9 @@ module RongIMLib {
             this.self = self;
             this.socket = Socket.getInstance().createServer();
             this.socket.connect(this.url, cb);
+            /* .en
+             * register listener status changed
+            */
             //注册状态改变观察者
             if (typeof Channel._ConnectionStatusListener == "object" && "onChanged" in Channel._ConnectionStatusListener) {
                 var me = this;
@@ -84,8 +90,14 @@ module RongIMLib {
             } else {
                 throw new Error("setConnectStatusListener:Parameter format is incorrect");
             }
+            /* .en
+             * register listener of message
+            */
             //注册message观察者
-            this.socket.on("message", self.handler.handleMessage);
+            this.socket.on("message", self.handler.handleMessage);x`x`x`
+            /* .en
+             * register listener of disconnect
+            */
             //注册断开连接观察者
             this.socket.on("disconnect", function(status: number) {
                 self.channel.socket.fire("StatusChanged", status ? status : 2);
@@ -106,6 +118,9 @@ module RongIMLib {
         }
     }
     export class Socket {
+        /* .en
+         * constant with transport, all the and transport correlation judgment XHR_POLLING WEBSOCKET properties
+        */
         //消息通道常量，所有和通道相关判断均用 XHR_POLLING WEBSOCKET两属性
         public static XHR_POLLING: string = "xhr-polling";
         public static WEBSOCKET: string = "websocket";
@@ -174,6 +189,10 @@ module RongIMLib {
          * [checkTransport 返回通道类型]
          * WEB_XHR_POLLING:是否选择comet方式进行连接
          */
+        /* .en
+         * [checkTransport return type of transport]
+         * WEB_XHR_POLLING:whether choose comet way to connect
+        */
         checkTransport(): string {
             if (RongIMClient._memoryStore.global["WEB_XHR_POLLING"]) {
                 Transportations._TransportType = Socket.XHR_POLLING;
@@ -220,6 +239,9 @@ module RongIMLib {
             };
         }
     }
+    /* .en
+     * connect to client message
+    */
     //连接端消息累
     export class Client {
         timeoutMillis: number = 100000;
@@ -274,18 +296,33 @@ module RongIMLib {
                         return;
                     }
                 }
+                /* .en
+                 * instantion message class
+                */
                 //实例消息处理类
                 this.handler = new MessageHandler(this);
+                /* .en
+                 * set up callback
+                */
                 //设置连接回调
                 this.handler.setConnectCallback(_callback);
+                /* .en
+                 * instantion transport class
+                */
                 //实例通道类型
                 var me = this;
                 this.channel = new Channel(Navigation.Endpoint, function() {
                     Transportations._TransportType == Socket.WEBSOCKET && me.keepLive();
                 }, this);
+                /* .en
+                 * trigger listener of status changed
+                */
                 //触发状态改变观察者
                 this.channel.socket.fire("StatusChanged", 1);
             } else {
+                /* .en
+                 * show error manual
+                */
                 //没有返回地址就手动抛出错误
                 _callback.onError(ConnectionState.NOT_AUTHORIZED);
             }
@@ -345,6 +382,9 @@ module RongIMLib {
             }
             this.SyncTimeQueue.state = "pending";
             if (temp.type != 2) {
+                /* .en
+                 * instantion message class
+                */common message
                 //普通消息
                 time = RongIMClient._cookieHelper.getItem(this.userId) || "0";
                 modules = new Modules.SyncRequestMsg();
@@ -352,6 +392,9 @@ module RongIMLib {
                 str = "pullMsg";
                 target = this.userId;
             } else {
+                /* .en
+                 * chat room message
+                */
                 //聊天室消息
                 target = chrmId || me.chatroomId;
                 time = RongIMClient._cookieHelper.getItem(target + Bridge._client.userId + "CST") || "0";
@@ -362,6 +405,9 @@ module RongIMLib {
                     throw new Error("syncTime:Received messages of chatroom but was not init");
                 }
             }
+            /* .en
+             * Judge whether the time of the server to news local storage time, less than it does not perform pull operation, step on the queue operations
+            */
             //判断服务器给的时间是否消息本地存储的时间，小于的话不执行拉取操作，进行一下步队列操作
             if (temp.pulltime <= time) {
                 this.SyncTimeQueue.state = "complete";
@@ -372,6 +418,9 @@ module RongIMLib {
                 modules.setIsPullSend(true);
             }
             modules.setSyncTime(time);
+            /* .en
+             * send queryMessage request
+            */
             //发送queryMessage请求
             this.queryMessage(str, MessageUtil.ArrayForm(modules.toArrayBuffer()), target, Qos.AT_LEAST_ONCE, {
                 onSuccess: function(collection: any) {
@@ -379,12 +428,21 @@ module RongIMLib {
                     if (str == "chrmPull") {
                         symbol += Bridge._client.userId + "CST";
                     }
+                    /* .en
+                     * Prevent caused by offline message session list is not null and cannot be pulled from the server session list.
+                    */
                     //防止因离线消息造成会话列表不为空而无法从服务器拉取会话列表。
                     RongIMClient._memoryStore.isSyncRemoteConverList = true;
+                    /* .en
+                     * Using ordinary message returns the timestamp in the local, the key for the userid, chat room message key userid + 'CST'; The value is returned by the server timestamp
+                    */
                     //把返回时间戳存入本地，普通消息key为userid，聊天室消息key为userid＋'CST'；value都为服务器返回的时间戳
                     RongIMClient._cookieHelper.setItem(symbol, sync);
                     me.SyncTimeQueue.state = "complete";
                     me.invoke(isPullMsg, target);
+                    /* .en
+                     * Pass the news of the pull to detailed to message listener
+                    */
                     //把拉取到的消息逐条传给消息监听器
                     var list = collection.list;
                     for (let i = 0, len = list.length; i < len; i++) {
@@ -403,6 +461,9 @@ module RongIMLib {
         }
         syncTime(_type?: any, pullTime?: any, chrmId?: string, offlineMsg?: boolean) {
             this.SyncTimeQueue.push({ type: _type, pulltime: pullTime });
+            /* .en
+             * If the queue is only one member and state has complete invoke method will perform
+            */
             //如果队列中只有一个成员并且状态已经完成就执行invoke方法
             if (this.SyncTimeQueue.length == 1 && this.SyncTimeQueue.state == "complete") {
                 this.invoke(!_type, chrmId, offlineMsg);
@@ -412,12 +473,18 @@ module RongIMLib {
             this.channel = new Channel(Navigation.Endpoint, f, this);
         }
     }
+    /* .en
+     * connect imclient and connect_client
+    */
     //连接类，实现imclient与connect_client的连接
     export class Bridge {
         static _client: Client;
         static getInstance(): Bridge {
             return new Bridge();
         }
+        /* .en
+         * connect server
+        */
         //连接服务器
         connect(appKey: string, token: string, callback: any): Client {
             if (!window["Modules"]) {
@@ -443,6 +510,9 @@ module RongIMLib {
             Bridge._client.clearHeartbeat();
             Bridge._client.channel.disconnect(2);
         }
+        /* .en
+         * execute queryMessage
+        */
         //执行queryMessage请求
         queryMsg(topic: any, content: any, targetId: string, callback: any, pbname?: string): void {
             if (typeof topic != "string") {
@@ -450,6 +520,9 @@ module RongIMLib {
             }
             Bridge._client.queryMessage(topic, content, targetId, Qos.AT_MOST_ONCE, callback, pbname);
         }
+        /* .en
+         * execute publishMessage
+        */
         //发送消息 执行publishMessage 请求
         pubMsg(topic: number, content: string, targetId: string, callback: any, msg: any): void {
             Bridge._client.publishMessage(_topic[10][topic], content, targetId, callback, msg);
@@ -469,6 +542,9 @@ module RongIMLib {
             this._client = client;
             this.syncMsgMap = new Object;
         }
+        /* .en
+         * put the object to callback object queue and start the timer
+        */
         //把对象推入回调对象队列中，并启动定时器
         putCallback(callbackObj: any, _publishMessageId: any, _msg: any): any {
             var item: any = {
@@ -478,6 +554,9 @@ module RongIMLib {
             item.Callback.resumeTimer();
             this.map[_publishMessageId] = item;
         }
+        /* .en
+         * set up the object of callback and start timer
+        */
         //设置连接回调对象，启动定时器
         setConnectCallback(_connectCallback: any): void {
             if (_connectCallback) {
@@ -487,10 +566,19 @@ module RongIMLib {
         }
 
         onReceived(msg: any, pubAckItem?: any, offlineMsg?: boolean): void {
+            /* .en
+             * entity
+            */
             //实体对象
             var entity: any,
+                /* .en
+                 * parsing is complete message object
+                */
                 //解析完成的消息对象
                 message: any,
+                /* .en
+                 * session object
+                */
                 //会话对象
                 con: Conversation;
             if (msg._name != "PublishMessage") {
@@ -522,6 +610,9 @@ module RongIMLib {
                     } else if (tmpType == "pc") {
                         entity.type = 5;
                     }
+                    /* .en
+                     * reuse field, targetId shall prevail
+                    */
                     //复用字段，targetId 以此为准
                     entity.groupId = msg.getTargetId();
                     entity.fromUserId = this._client.userId;
@@ -531,6 +622,9 @@ module RongIMLib {
                     return;
                 }
             }
+            /* .en
+             * Parsing entity object for the message object.
+            */
             //解析实体对象为消息对象。
             message = MessageUtil.messageParser(entity, this._onReceived, offlineMsg);
             if (pubAckItem) {
@@ -655,6 +749,9 @@ module RongIMLib {
                     }
                     var temp = Bridge._client.handler.map[msg.getMessageId()];
                     if (temp) {
+                        /* .en
+                         * Execute
+                        */
                         //执行回调操作
                         temp.Callback.process(msg.getStatus(), msg.getData(), msg.getDate(), temp.Message);
                         delete Bridge._client.handler.map[msg.getMessageId()];

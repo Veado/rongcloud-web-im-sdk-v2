@@ -4,6 +4,9 @@ module RongIMLib {
      * 把消息对象写入流中
      * 发送消息时用到
      */
+    /* .en
+     * write object of message to stream when sent message
+    */
     export class MessageOutputStream {
         out: RongIMLib.RongIMStream;
         constructor(_out: any) {
@@ -20,6 +23,9 @@ module RongIMLib {
      * 流转换为消息对象
      * 服务器返回消息时用到
      */
+    /* .en
+     * change stream to object of message when reply by server
+    */
     export class MessageInputStream {
         msg: any;
         flags: any;
@@ -142,6 +148,9 @@ module RongIMLib {
     /**
      * 二进制帮助对象
      */
+    /* .en
+     * binary helper
+    */
     export class BinaryHelper {
         writeUTF(str: string, isGetBytes?: any): any {
             var back: any = [], byteSize = 0;
@@ -201,6 +210,10 @@ module RongIMLib {
          * [convertStream 将参数x转化为RongIMStream对象]
          * @param  {any}    x [参数]
          */
+        /* .en
+         * [convertStream change parameter X to RongIMStream]
+         * @param  {any}    x [parameter]
+        */
         convertStream(x: any): RongIMStream {
             if (x instanceof RongIMStream) {
                 return x;
@@ -214,8 +227,14 @@ module RongIMLib {
     }
     export class RongIMStream {
         pool: any;
+        /* .en
+         * start address with currently stream 
+        */
         //当前流执行的起始位置
         position: number = 0;
+        /* .en
+         * count bytes with current stream
+        */
         //当前流写入的多少字节
         writen: number = 0;
 

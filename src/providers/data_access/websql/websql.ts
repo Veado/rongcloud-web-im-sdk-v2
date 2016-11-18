@@ -59,8 +59,14 @@ module RongIMLib {
                     }
                 }, null);
             }
+            /* .en
+             * query the top session
+            */
             //查询置顶会话。
             var tSql: string = "select * from t_conversation_" + this.database.userId + " t where t.isTop = 1 ";
+            /* .en
+             * order the session
+            */
             //排序查询会话。
             var oSql: string = "select * from t_conversation_" + this.database.userId + " c where c.isTop != 1 order by c.sentTime ";
             var me = this;
@@ -188,6 +194,9 @@ module RongIMLib {
                         onError: function(error: ErrorCode) { }
                     });
                 } else {
+                    /* .en
+                     * TODO There may be equal len and count and service area have no history, history lead to DORA take a message.
+                    */
                     //TODO 可能存在 len 和 count 相等并且服务区没有历史消息，导致多拉取一次历史消息。
                     callback.onSuccess(results, true);
                     RongIMClient._memoryStore.lastReadTime.set(conversationType + targetId, result[len - 1].sentTime);

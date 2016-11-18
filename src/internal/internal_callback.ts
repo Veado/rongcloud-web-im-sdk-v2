@@ -138,6 +138,9 @@ module RongIMLib {
                     return;
                 }
                 if ("GetUserInfoOutput" == pbtype) {
+                    /* .en
+                     * put data to cache list of userinfo if type of pb is GetUserInfoOutput
+                    */
                     //pb类型为GetUserInfoOutput的话就把data放入userinfo缓存队列
                     Client.userInfoMapping[data.userId] = data;
                 }
@@ -193,6 +196,9 @@ module RongIMLib {
                 }
 
             } else if (status == 6) {
+                /* .en
+                 * redirect
+                */
                 //重定向
                 var x: any = {};
                 var me = this;

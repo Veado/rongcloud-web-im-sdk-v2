@@ -6,6 +6,12 @@ module RongIMLib {
          * HTTP或WS自动设置 schemeType为ConnectionChannel.HTTP
          * @type {number}
          */
+        /* .en
+         * [schemeType select connect type]
+         * SSL set chemeType to ConnectionChannel.HTTPS automatic
+         * HTTP or WS set schemeType为ConnectionChannel.HTTP automatic
+         * @type {number}
+        */
         static schemeType: number;
         static MessageType: { [s: string]: any } = {};
         static MessageParams: { [s: string]: any };
@@ -28,6 +34,11 @@ module RongIMLib {
          * @param appKey    开发者后台申请的 AppKey，用来标识应用。
          * @param dataAccessProvider 必须是DataAccessProvider的实例
          */
+        /* .en
+         * initialize SDK ，call once only
+         * @param appKey    application KEY from develop center,used to identify the application
+         * @param dataAccessProvider intance by DataAccessProvider
+        */
 
         static init(appKey: string, dataAccessProvider?: DataAccessProvider): void {
             if (!RongIMClient._instance) {
@@ -164,6 +175,12 @@ module RongIMLib {
          * @param token     从服务端获取的用户身份令牌（Token）。
          * @param callback  连接回调，返回连接的成功或者失败状态。
          */
+        /* .en
+         * connect server,call once only,reconnected automatic when disconnected
+         *
+         * @param token     user token from server
+         * @param callback  return status of connection
+        */
         static connect(token: string, callback: ConnectCallback): RongIMClient {
             CheckParam.getInstance().check(["string", "object"], "connect", true);
             RongIMClient.bridge = Bridge.getInstance();
@@ -193,7 +210,10 @@ module RongIMLib {
                     }
                 }
             });
-            //循环设置监听事件，追加之后清空存放事件数据
+            /* .en
+             * connect server,call once only,reconnected automatic when disconnected
+            */
+            //Circulation set up to monitor events, additional after emptying storage event data
             for (let i = 0, len = RongIMClient._memoryStore.listenerList.length; i < len; i++) {
                 RongIMClient.bridge["setListener"](RongIMClient._memoryStore.listenerList[i]);
             }
@@ -208,6 +228,12 @@ module RongIMLib {
          * 内建的消息类型已经注册过，不需要再次注册。
          * 自定义消息声明需放在执行顺序最高的位置（在RongIMClient.init(appkey)之后即可）
          * @param objectName  消息内置名称
+         */
+        /* .en
+         * register message type for costom information by user self
+         * register once only
+         * Custom message statement should be put in order in the highest position (bihind RongIMClient.init(appkey)）
+         * @param objectName  built-in name of message
          */
         static registerMessageType(messageType: string, objectName: string, messageTag: MessageTag, messageContent: any): void {
             if (!messageType) {
@@ -234,11 +260,15 @@ module RongIMLib {
             RongIMClient.MessageParams[messageType] = { objectName: objectName, msgTag: messageTag };
             registerMessageTypeMapping[objectName] = messageType;
         }
-
         /**
          * 设置连接状态变化的监听器。
          *
          * @param listener  连接状态变化的监听器。
+         */
+        /* .en
+         * listen change of connection status
+         *
+         * @param listener  listen change of connection status
          */
         static setConnectionStatusListener(listener: ConnectionStatusListener): void {
             if (RongIMClient.bridge) {
@@ -253,6 +283,11 @@ module RongIMLib {
          *
          * @param listener  接收消息的监听器。
          */
+        /* .en
+         * listener of receive message
+         *
+         * @param listener  listener of receive message
+         */
         static setOnReceiveMessageListener(listener: OnReceiveMessageListener): void {
             if (RongIMClient.bridge) {
                 RongIMClient.bridge.setListener(listener);
@@ -263,12 +298,18 @@ module RongIMLib {
         /**
          * 清理所有连接相关的变量
          */
+        /* .en
+         * Clean up all the connections related variables
+         */
         logout() {
             RongIMClient.bridge.disconnect();
             RongIMClient.bridge = null;
         }
         /**
          * 断开连接。
+         */
+        /* .en
+         * disconnect
          */
         disconnect(): void {
             RongIMClient.bridge.disconnect();
@@ -354,12 +395,18 @@ module RongIMLib {
         /**
          * 获取当前连接的状态。
          */
+        /* .en
+         * get currently connection status
+         */
         getCurrentConnectionStatus(): ConnectionStatus {
             return Bridge._client.channel.connectionStatus;
         }
 
         /**
          * 获取当前使用的连接通道。
+         */
+        /* .en
+         * get currently connection channel
          */
         getConnectionChannel(): ConnectionChannel {
             if (Transportations._TransportType == Socket.XHR_POLLING) {
@@ -372,6 +419,9 @@ module RongIMLib {
         /**
          * 获取当前使用的本地储存提供者。 TODO
          */
+        /* .en
+         * get currently storage provider
+         */
         getStorageProvider(): string {
             if (RongIMClient._memoryStore.providerType == 1) {
                 return "ServerDataProvider";
@@ -381,6 +431,10 @@ module RongIMLib {
         }
         /**
          * 过滤聊天室消息（拉取最近聊天消息）
+         * @param {string[]} msgFilterNames
+         */
+        /* .en
+         * Filtering chat room message (pull recently chat messages)
          * @param {string[]} msgFilterNames
          */
         setFilterMessages(msgFilterNames: string[]): void {
@@ -396,9 +450,11 @@ module RongIMLib {
             modules.setChannelName(channelName);
             RongIMClient.bridge.queryMsg(32, MessageUtil.ArrayForm(modules.toArrayBuffer()), Bridge._client.userId, callback, "VoipDynamicOutput");
         }
-
         /**
          * 获取当前连接用户的 UserId。
+         */
+        /* .en
+         * get UserId
          */
         getCurrentUserId(): string {
             return Bridge._client.userId;
@@ -435,6 +491,11 @@ module RongIMLib {
          * 获取服务器时间与本地时间的差值，单位为毫秒。
          * 计算公式：差值 = 本地时间毫秒数 - 服务器时间毫秒数
          * @param callback  获取的回调，返回差值。
+         */
+        /* .en
+         * Access to the server time and local time difference,unit : milliseconds
+         * Formula: difference = local time milliseconds - server milliseconds
+         * @param callback  return difference
          */
         getDeltaTime(): number {
             return RongIMClient._memoryStore.deltaTime;
@@ -474,6 +535,13 @@ module RongIMLib {
          * @param  {string}                  targetId         [用户id]
          * @param  {ResultCallback<boolean>} callback         [返回值，参数回调]
          */
+        /* .en
+         * TODO clear unread message in local cache
+         * [clearMessagesUnreadStatus clear unread message with specified session]
+         * @param  {ConversationType}        conversationType 
+         * @param  {string}                  targetId         
+         * @param  {ResultCallback<boolean>} callback         
+         */
         clearMessagesUnreadStatus(conversationType: ConversationType, targetId: string, callback: ResultCallback<boolean>) {
             RongIMClient._dataAccessProvider.updateMessages(conversationType, targetId, "readStatus", null, {
                 onSuccess: function(bool: boolean) {
@@ -490,6 +558,13 @@ module RongIMLib {
         }
         /**
          * [deleteMessages 删除消息记录。]
+         * @param  {ConversationType}        conversationType [description]
+         * @param  {string}                  targetId         [description]
+         * @param  {number[]}                messageIds       [description]
+         * @param  {ResultCallback<boolean>} callback         [description]
+         */
+        /* .en
+         * [deleteMessages delete messages]
          * @param  {ConversationType}        conversationType [description]
          * @param  {string}                  targetId         [description]
          * @param  {number[]}                messageIds       [description]
@@ -523,6 +598,16 @@ module RongIMLib {
          * @param  {ResultCallback<Message>} resultCallback   [返回值，函数回调]
          * @param  {string}                  pushContent      []
          * @param  {string}                  pushData         []
+         */
+        /* .en 
+         * [sendMessage send message]
+         * @param  {ConversationType}        conversationType
+         * @param  {string}                  targetId        
+         * @param  {MessageContent}          messageContent  
+         * @param  {SendMessageCallback}     sendCallback    
+         * @param  {ResultCallback<Message>} resultCallback  
+         * @param  {string}                  pushContent    
+         * @param  {string}                  pushData       
          */
         sendMessage(conversationType: ConversationType, targetId: string, messageContent: MessageContent, sendCallback: SendMessageCallback, mentiondMsg?: boolean) {
             CheckParam.getInstance().check(["number", "string", "object", "object", "undefined|object|null|global|boolean"], "sendMessage");
@@ -639,6 +724,12 @@ module RongIMLib {
          * @param  {SendMessageCallback}     sendCallback   [description]
          * @param  {ResultCallback<Message>} resultCallback [description]
          */
+        /* .en
+         * [sendStatusMessage description]
+         * @param  {MessageContent}          messageContent [description]
+         * @param  {SendMessageCallback}     sendCallback   [description]
+         * @param  {ResultCallback<Message>} resultCallback [description]
+         */
         sendStatusMessage(messageContent: MessageContent, sendCallback: SendMessageCallback, resultCallback: ResultCallback<Message>) {
             throw new Error("Not implemented yet");
         }
@@ -647,12 +738,25 @@ module RongIMLib {
          * @param  {string}                  content        [消息内容]
          * @param  {ResultCallback<Message>} resultCallback [返回值，参数回调]
          */
+        /* .en
+         * [sendTextMessage send TextMessage shortcut]
+         * @param  {string}                  content   
+         * @param  {ResultCallback<Message>} resultCallback 
+         */
         sendTextMessage(conversationType: ConversationType, targetId: string, content: string, sendMessageCallback: SendMessageCallback) {
             var msgContent = TextMessage.obtain(content);
             this.sendMessage(conversationType, targetId, msgContent, sendMessageCallback);
         }
         /**
          * [insertMessage 向本地插入一条消息，不发送到服务器。]
+         * @param  {ConversationType}        conversationType [description]
+         * @param  {string}                  targetId         [description]
+         * @param  {string}                  senderUserId     [description]
+         * @param  {MessageContent}          content          [description]
+         * @param  {ResultCallback<Message>} callback         [description]
+         */
+        /* .en
+         * [insertMessage insert a message to local,do not send to server]
          * @param  {ConversationType}        conversationType [description]
          * @param  {string}                  targetId         [description]
          * @param  {string}                  senderUserId     [description]
@@ -678,6 +782,15 @@ module RongIMLib {
          * @param  {ResultCallback<Message[]>} callback         [回调函数]
          * @param  {string}                    objectName       [objectName]
          */
+        /*.en
+         * [getHistoryMessages get message history]
+         * @param  {ConversationType}          conversationType
+         * @param  {string}                    targetId         
+         * @param  {number|null}               pullMessageTime  
+         * @param  {number}                    count           
+         * @param  {ResultCallback<Message[]>} callback        
+         * @param  {string}                    objectName     
+        */
         getHistoryMessages(conversationType: ConversationType, targetId: string, timestamp: number, count: number, callback: GetHistoryMessagesCallback) {
             CheckParam.getInstance().check(["number", "string", "number|null|global|object", "number", "object"], "getHistoryMessages");
             if (count > 20) {
@@ -691,6 +804,14 @@ module RongIMLib {
 
         /**
          * [getRemoteHistoryMessages 拉取某个时间戳之前的消息]
+         * @param  {ConversationType}          conversationType [description]
+         * @param  {string}                    targetId         [description]
+         * @param  {Date}                      dateTime         [description]
+         * @param  {number}                    count            [description]
+         * @param  {ResultCallback<Message[]>} callback         [description]
+         */
+        /* .en
+         * [getRemoteHistoryMessages get Remote History Messages]
          * @param  {ConversationType}          conversationType [description]
          * @param  {string}                    targetId         [description]
          * @param  {Date}                      dateTime         [description]
@@ -743,6 +864,12 @@ module RongIMLib {
          * @param  {string}          token    [token]
          * @param  {ConnectCallback} callback [返回值，参数回调]
          */
+        /* .en
+         * [hasRemoteUnreadMessages whether have unreceive messages，jsonp function]
+         * @param  {string}          appkey   [appkey]
+         * @param  {string}          token    [token]
+         * @param  {ConnectCallback} callback [返回值，参数回调]
+         */
         hasRemoteUnreadMessages(token: string, callback: ResultCallback<Boolean>) {
             var xss: any = null;
             window.RCCallback = function(x: any) {
@@ -776,6 +903,11 @@ module RongIMLib {
          * @param  {ResultCallback<number>} callback             [返回值，参数回调。]
          * @param  {ConversationType[]}     ...conversationTypes [会话类型。]
          */
+        /* .en
+         * [getConversationUnreadCount get conversation unread messages count]
+         * @param  {ResultCallback<number>} callback           
+         * @param  {ConversationType[]}     ...conversationTypes 
+         */
         getConversationUnreadCount(conversationTypes: ConversationType[], callback: ResultCallback<number>) {
             RongIMClient._dataAccessProvider.getConversationUnreadCount(conversationTypes, {
                 onSuccess: function(count: number) {
@@ -794,6 +926,11 @@ module RongIMLib {
          * [getUnreadCount 指定用户、会话类型的未读消息总数。]
          * @param  {ConversationType} conversationType [会话类型]
          * @param  {string}           targetId         [用户Id]
+         */
+        /* .en
+         * [getUnreadCount get unread messages count]
+         * @param  {ConversationType} conversationType 
+         * @param  {string}           targetId        
          */
         getUnreadCount(conversationType: ConversationType, targetId: string, callback: ResultCallback<number>) {
             RongIMClient._dataAccessProvider.getUnreadCount(conversationType, targetId, {
@@ -814,6 +951,12 @@ module RongIMLib {
          * @param  {ConversationType}        conversationType 会话类型
          * @param  {string}                  targetId         目标Id
          * @param  {ResultCallback<boolean>} callback         返回值，函数回调
+         */
+        /* /en
+         * clear unread messages count
+         * @param  {ConversationType}        conversationType 
+         * @param  {string}                  targetId       
+         * @param  {ResultCallback<boolean>} callback      
          */
         clearUnreadCount(conversationType: ConversationType, targetId: string, callback: ResultCallback<boolean>) {
             RongIMClient._dataAccessProvider.clearUnreadCount(conversationType, targetId, {
@@ -883,6 +1026,11 @@ module RongIMLib {
          * @param  {ConversationType}        conversationType 会话类型
          * @param  {string}                  targetId         目标Id
          */
+        /* .en
+         * clearTextMessageDraft clear draft
+         * @param  {ConversationType}        conversationType 
+         * @param  {string}                  targetId         
+         */
         clearTextMessageDraft(conversationType: ConversationType, targetId: string): boolean {
             CheckParam.getInstance().check(["number", "string", "object"], "clearTextMessageDraft");
             var key: string = "darf_" + conversationType + "_" + targetId;
@@ -893,6 +1041,11 @@ module RongIMLib {
          * [getTextMessageDraft 获取指定消息和会话的草稿。]
          * @param  {ConversationType}       conversationType [会话类型]
          * @param  {string}                 targetId         [目标Id]
+         */
+        /* .en
+         * [getTextMessageDraft get draft]
+         * @param  {ConversationType}       conversationType 
+         * @param  {string}                 targetId       
          */
         getTextMessageDraft(conversationType: ConversationType, targetId: string): string {
             CheckParam.getInstance().check(["number", "string", "object"], "getTextMessageDraft");
@@ -907,6 +1060,12 @@ module RongIMLib {
          * @param  {ConversationType}        conversationType [会话类型]
          * @param  {string}                  targetId         [目标Id]
          * @param  {string}                  value            [草稿值]
+         */
+        /* .en
+         * [saveTextMessageDraft save draft]
+         * @param  {ConversationType}        conversationType
+         * @param  {string}                  targetId      
+         * @param  {string}                  value       
          */
         saveTextMessageDraft(conversationType: ConversationType, targetId: string, value: string): boolean {
             CheckParam.getInstance().check(["number", "string", "string", "object"], "saveTextMessageDraft");
@@ -948,6 +1107,12 @@ module RongIMLib {
          * @param  {string}                       targetId         [目标Id]
          * @param  {ResultCallback<Conversation>} callback         [返回值，函数回调]
          */
+        /* .en
+         * [getConversation execute after getConversationList]
+         * @param  {ConversationType}             conversationType 
+         * @param  {string}                       targetId      
+         * @param  {ResultCallback<Conversation>} callback        
+         */
         getConversation(conversationType: ConversationType, targetId: string, callback: ResultCallback<Conversation>) {
             CheckParam.getInstance().check(["number", "string", "object"], "getConversation");
             RongIMClient._dataAccessProvider.getConversation(conversationType, targetId, {
@@ -967,6 +1132,12 @@ module RongIMLib {
         /**
          * [pottingConversation 组装会话列表]
          * @param {any} tempConver [临时会话]
+         * conver_conversationType_targetId_no.
+         * msg_conversationType_targetId_no.
+         */
+        /* .en
+         * [pottingConversation potting conversation]
+         * @param {any} tempConver [temp conversation]
          * conver_conversationType_targetId_no.
          * msg_conversationType_targetId_no.
          */
@@ -1118,6 +1289,13 @@ module RongIMLib {
          * @param  {string}  converTitle      [会话标题]
          * @param  {boolean} islocal          [是否同步到服务器，ture：同步，false:不同步]
          */
+        /* .en
+         * [createConversation create conversation]
+         * @param  {number}  conversationType 
+         * @param  {string}  targetId         
+         * @param  {string}  converTitle      
+         * @param  {boolean} islocal    
+         */
         createConversation(conversationType: number, targetId: string, converTitle: string): Conversation {
             CheckParam.getInstance().check(["number", "string", "string"], "createConversation");
             var conver = new Conversation();
@@ -1180,21 +1358,37 @@ module RongIMLib {
          * @param  {string}                                         targetId         [目标Id]
          * @param  {ResultCallback<ConversationNotificationStatus>} callback         [返回值，函数回调]
          */
+        /* .en
+         * [getConversationNotificationStatus get conversation notification status]
+         * @param  {ConversationType}                               conversationType 
+         * @param  {string}                                         targetId        
+         * @param  {ResultCallback<ConversationNotificationStatus>} callback      
+         */
         getConversationNotificationStatus(conversationType: ConversationType, targetId: string, callback: ResultCallback<ConversationNotificationStatus>) {
             throw new Error("Not implemented yet");
-        }
+        } 
         /**
          * [setConversationNotificationStatus 设置指定用户和会话类型免提醒。]
          * @param  {ConversationType}                               conversationType [会话类型]
          * @param  {string}                                         targetId         [目标Id]
          * @param  {ResultCallback<ConversationNotificationStatus>} callback         [返回值，函数回调]
          */
+        /* .en
+         * [setConversationNotificationStatus set conversation notification status]
+         * @param  {ConversationType}                               conversationType 
+         * @param  {string}                                         targetId       
+         * @param  {ResultCallback<ConversationNotificationStatus>} callback  
+        */
         setConversationNotificationStatus(conversationType: ConversationType, targetId: string, notificationStatus: ConversationNotificationStatus, callback: ResultCallback<ConversationNotificationStatus>) {
             throw new Error("Not implemented yet");
         }
         /**
          * [getNotificationQuietHours 获取免提醒消息时间。]
          * @param  {GetNotificationQuietHoursCallback} callback [返回值，函数回调]
+         */
+        /* .en
+         * [getNotificationQuietHours get time of notification]
+         * @param  {GetNotificationQuietHoursCallback} callback 
          */
         getNotificationQuietHours(callback: GetNotificationQuietHoursCallback) {
             throw new Error("Not implemented yet");
@@ -1203,12 +1397,20 @@ module RongIMLib {
          * [removeNotificationQuietHours 移除免提醒消息时间。]
          * @param  {GetNotificationQuietHoursCallback} callback [返回值，函数回调]
          */
+        /* .en
+         * [removeNotificationQuietHours remove time of notification]
+         * @param  {GetNotificationQuietHoursCallback} callback 
+         */
         removeNotificationQuietHours(callback: OperationCallback) {
             throw new Error("Not implemented yet");
         }
         /**
          * [setNotificationQuietHours 设置免提醒消息时间。]
          * @param  {GetNotificationQuietHoursCallback} callback [返回值，函数回调]
+         */
+        /* .en
+         * [setNotificationQuietHours set time of notification]
+         * @param  {GetNotificationQuietHoursCallback} callback
          */
         setNotificationQuietHours(startTime: string, spanMinutes: number, callback: OperationCallback) {
             throw new Error("Not implemented yet");
@@ -1222,6 +1424,12 @@ module RongIMLib {
          * @param  {string}            discussionId [讨论组Id]
          * @param  {string[]}          userIdList   [讨论中成员]
          * @param  {OperationCallback} callback     [返回值，函数回调]
+         */
+        /* .en
+         * [addMemberToDiscussion   add member to discussion]
+         * @param  {string}            discussionId 
+         * @param  {string[]}          userIdList
+         * @param  {OperationCallback} callback    
          */
         addMemberToDiscussion(discussionId: string, userIdList: string[], callback: OperationCallback) {
             CheckParam.getInstance().check(["string", "array", "object"], "addMemberToDiscussion");
@@ -1245,6 +1453,12 @@ module RongIMLib {
          * @param  {string}                   name       [讨论组名称]
          * @param  {string[]}                 userIdList [讨论组成员]
          * @param  {CreateDiscussionCallback} callback   [返回值，函数回调]
+         */
+        /* .en
+         * [createDiscussion create discussion]
+         * @param  {string}                   name     
+         * @param  {string[]}                 userIdList 
+         * @param  {CreateDiscussionCallback} callback   
          */
         createDiscussion(name: string, userIdList: string[], callback: CreateDiscussionCallback) {
             CheckParam.getInstance().check(["string", "array", "object"], "createDiscussion");
@@ -1278,6 +1492,11 @@ module RongIMLib {
          * @param  {string}                     discussionId [讨论组Id]
          * @param  {ResultCallback<Discussion>} callback     [返回值，函数回调]
          */
+        /* .en
+         * [getDiscussion get discussion information]
+         * @param  {string}                     discussionId 
+         * @param  {ResultCallback<Discussion>} callback   
+         */
         getDiscussion(discussionId: string, callback: ResultCallback<Discussion>) {
             CheckParam.getInstance().check(["string", "object"], "getDiscussion");
             var modules = new Modules.ChannelInfoInput();
@@ -1300,6 +1519,11 @@ module RongIMLib {
          * @param  {string}            discussionId [讨论组Id]
          * @param  {OperationCallback} callback     [返回值，函数回调]
          */
+        /* .en
+         * [quitDiscussion quit discussion]
+         * @param  {string}            discussionId 
+         * @param  {OperationCallback} callback  
+         */
         quitDiscussion(discussionId: string, callback: OperationCallback) {
             CheckParam.getInstance().check(["string", "object"], "quitDiscussion");
             var modules = new Modules.LeaveChannelInput();
@@ -1312,6 +1536,12 @@ module RongIMLib {
          * @param  {string}            userId       [被移除的用户Id]
          * @param  {OperationCallback} callback     [返回值，参数回调]
          */
+        /* .en
+         * [removeMemberFromDiscussion remove member from discussion]
+         * @param  {string}            discussionId 
+         * @param  {string}            userId      
+         * @param  {OperationCallback} callback    
+         */
         removeMemberFromDiscussion(discussionId: string, userId: string, callback: OperationCallback) {
             CheckParam.getInstance().check(["string", "string", "object"], "removeMemberFromDiscussion");
             var modules = new Modules.ChannelEvictionInput();
@@ -1323,6 +1553,12 @@ module RongIMLib {
          * @param  {string}                 discussionId [讨论组Id]
          * @param  {DiscussionInviteStatus} status       [邀请状态]
          * @param  {OperationCallback}      callback     [返回值，函数回调]
+         */
+        /* .en
+         * [setDiscussionInviteStatus set discussion invite status]
+         * @param  {string}                 discussionId
+         * @param  {DiscussionInviteStatus} status     
+         * @param  {OperationCallback}      callback    
          */
         setDiscussionInviteStatus(discussionId: string, status: DiscussionInviteStatus, callback: OperationCallback) {
             CheckParam.getInstance().check(["string", "number", "object"], "setDiscussionInviteStatus");
@@ -1345,6 +1581,12 @@ module RongIMLib {
          * @param  {string}            discussionId [讨论组Id]
          * @param  {string}            name         [讨论组名称]
          * @param  {OperationCallback} callback     [返回值，函数回调]
+         */
+        /* .en
+         * [setDiscussionName set discussion name]
+         * @param  {string}            discussionId 
+         * @param  {string}            name       
+         * @param  {OperationCallback} callback    
          */
         setDiscussionName(discussionId: string, name: string, callback: OperationCallback) {
             CheckParam.getInstance().check(["string", "string", "object"], "setDiscussionName");
@@ -1371,6 +1613,12 @@ module RongIMLib {
          * @param  {string}            groupName [群组名称]
          * @param  {OperationCallback} callback  [返回值，函数回调]
          */
+        /* .en
+         * [join group]
+         * @param  {string}            groupId  
+         * @param  {string}            groupName 
+         * @param  {OperationCallback} callback  
+         */
         joinGroup(groupId: string, groupName: string, callback: OperationCallback) {
             CheckParam.getInstance().check(["string", "string", "object"], "joinGroup");
             var modules = new Modules.GroupInfo();
@@ -1394,6 +1642,11 @@ module RongIMLib {
          * @param  {string}            groupId  [群组Id]
          * @param  {OperationCallback} callback [返回值，函数回调]
          */
+        /* .en
+         * [quit group]
+         * @param  {string}            groupId 
+         * @param  {OperationCallback} callback 
+         */
         quitGroup(groupId: string, callback: OperationCallback) {
             CheckParam.getInstance().check(["string", "object"], "quitGroup");
             var modules = new Modules.LeaveChannelInput();
@@ -1414,8 +1667,16 @@ module RongIMLib {
          * @param  {Array<Group>}      groups   [群组列表]
          * @param  {OperationCallback} callback [返回值，函数回调]
          */
+        /* .en
+         * [sync group information]
+         * @param  {Array<Group>}      groups   
+         * @param  {OperationCallback} callback 
+         */
         syncGroup(groups: Array<Group>, callback: OperationCallback) {
             CheckParam.getInstance().check(["array", "object"], "syncGroup");
+            /* .en
+             * Remove the duplicate
+            */
             //去重操作
             for (var i: number = 0, part: Array<string> = [], info: Array<any> = [], len: number = groups.length; i < len; i++) {
                 if (part.length === 0 || !(groups[i].id in part)) {
@@ -1431,7 +1692,11 @@ module RongIMLib {
             modules.setGroupHashCode(md5(part.sort().join("")));
             RongIMClient.bridge.queryMsg(13, MessageUtil.ArrayForm(modules.toArrayBuffer()), Bridge._client.userId, {
                 onSuccess: function(result: number) {
+                    /* .en
+                     * 1 need sync 2 need not sync
+                    */
                     //1为群信息不匹配需要发送给服务器进行同步，0不需要同步
+
                     if (result === 1) {
                         var val = new Modules.GroupInput();
                         val.setGroupInfo(info);
@@ -1469,6 +1734,12 @@ module RongIMLib {
          * @param  {string}            chatroomId   [聊天室Id]
          * @param  {number}            messageCount [拉取消息数量，-1为不拉去消息]
          * @param  {OperationCallback} callback     [返回值，函数回调]
+         */
+        /* .en
+         * [joun chat room]
+         * @param  {string}            chatroomId   
+         * @param  {number}            messageCount 
+         * @param  {OperationCallback} callback 
          */
         joinChatRoom(chatroomId: string, messageCount: number, callback: OperationCallback) {
             CheckParam.getInstance().check(["string", "number", "object"], "joinChatRoom");
@@ -1544,6 +1815,11 @@ module RongIMLib {
          * @param  {string}            chatroomId [聊天室Id]
          * @param  {OperationCallback} callback   [返回值，函数回调]
          */
+        /* .en
+         * [quit chat room]
+         * @param  {string}            chatroomId 
+         * @param  {OperationCallback} callback  
+         */
         quitChatRoom(chatroomId: string, callback: OperationCallback) {
             CheckParam.getInstance().check(["string", "object"], "quitChatRoom");
             var e = new Modules.ChrmInput();
@@ -1586,6 +1862,10 @@ module RongIMLib {
          * [getPublicServiceList ]获取已经的公共账号列表
          * @param  {ResultCallback<PublicServiceProfile[]>} callback [返回值，参数回调]
          */
+        /* .en
+         * [getPublicServiceList get public service account list]
+         * @param  {ResultCallback<PublicServiceProfile[]>} callback 
+         */
         getPublicServiceList(callback: ResultCallback<PublicServiceProfile[]>) {
             CheckParam.getInstance().check(["object"], "getPublicServiceList");
             callback.onSuccess(RongIMClient._memoryStore.publicServiceMap.publicServiceList);
@@ -1596,6 +1876,12 @@ module RongIMLib {
          * @param  {string}                               publicServiceId   [公共服务 Id。]
          * @param  {ResultCallback<PublicServiceProfile>} callback          [公共账号信息回调。]
          */
+        /* .en
+         * [getPublicServiceProfile get public service account profile] 
+         * @param  {PublicServiceType}                    publicServiceType 
+         * @param  {string}                               publicServiceId   
+         * @param  {ResultCallback<PublicServiceProfile>} callback       
+         */
         getPublicServiceProfile(publicServiceType: ConversationType, publicServiceId: string, callback: ResultCallback<PublicServiceProfile>) {
             CheckParam.getInstance().check(["number", "string", "object"], "getPublicServiceProfile");
             var profile: PublicServiceProfile = RongIMClient._memoryStore.publicServiceMap.get(publicServiceType, publicServiceId);
@@ -1604,6 +1890,11 @@ module RongIMLib {
 
         /**
          * [pottingPublicSearchType ] 公众好查询类型
+         * @param  {number} bussinessType [ 0-all 1-mp 2-mc]
+         * @param  {number} searchType    [0-exact 1-fuzzy]
+         */
+        /* .en
+         * [pottingPublicSearchType potting public search type] 
          * @param  {number} bussinessType [ 0-all 1-mp 2-mc]
          * @param  {number} searchType    [0-exact 1-fuzzy]
          */
@@ -1641,6 +1932,12 @@ module RongIMLib {
          * @param  {string}                                 keywords   [搜索关键字。]
          * @param  {ResultCallback<PublicServiceProfile[]>} callback   [搜索结果回调。]
          */
+        /* .en
+         * [searchPublicService search public service]
+         * @param  {SearchType}                             searchType 
+         * @param  {string}                                 keywords   
+         * @param  {ResultCallback<PublicServiceProfile[]>} callback 
+         */
         searchPublicService(searchType: SearchType, keywords: string, callback: ResultCallback<PublicServiceProfile[]>) {
             CheckParam.getInstance().check(["number", "string", "object"], "searchPublicService");
             var modules = new Modules.SearchMpInput();
@@ -1655,6 +1952,13 @@ module RongIMLib {
          * @param  {string}                                 keywords          [搜索关键字。]
          * @param  {ResultCallback<PublicServiceProfile[]>} callback          [搜索结果回调。]
          */
+        /* .en
+         * [searchPublicServiceByType search public service by service type]
+         * @param  {PublicServiceType}                      publicServiceType 
+         * @param  {SearchType}                             searchType      
+         * @param  {string}                                 keywords        
+         * @param  {ResultCallback<PublicServiceProfile[]>} callback       
+         */
         searchPublicServiceByType(publicServiceType: ConversationType, searchType: SearchType, keywords: string, callback: ResultCallback<PublicServiceProfile[]>) {
             CheckParam.getInstance().check(["number", "number", "string", "object"], "searchPublicServiceByType");
             var type: number = publicServiceType == ConversationType.APP_PUBLIC_SERVICE ? 2 : 1;
@@ -1668,6 +1972,12 @@ module RongIMLib {
          * @param  {PublicServiceType} publicServiceType [公众服务类型。]
          * @param  {string}            publicServiceId   [公共服务 Id。]
          * @param  {OperationCallback} callback          [订阅公众号回调。]
+         */
+        /* .en
+         * [subscribePublicService follow public service account] 
+         * @param  {PublicServiceType} publicServiceType 
+         * @param  {string}            publicServiceId 
+         * @param  {OperationCallback} callback       
          */
         subscribePublicService(publicServiceType: ConversationType, publicServiceId: string, callback: OperationCallback) {
             CheckParam.getInstance().check(["number", "string", "object"], "subscribePublicService");
@@ -1692,6 +2002,12 @@ module RongIMLib {
          * @param  {string}            publicServiceId   [公共服务 Id。]
          * @param  {OperationCallback} callback          [取消订阅公众号回调。]
          */
+        /* .en
+         * [unsubscribePublicService unfollow public service account]
+         * @param  {PublicServiceType} publicServiceType 
+         * @param  {string}            publicServiceId   
+         * @param  {OperationCallback} callback          
+         */
         unsubscribePublicService(publicServiceType: ConversationType, publicServiceId: string, callback: OperationCallback) {
             CheckParam.getInstance().check(["number", "string", "object"], "unsubscribePublicService");
             var modules = new Modules.MPFollowInput(), me = this, follow = publicServiceType == ConversationType.APP_PUBLIC_SERVICE ? "mcUnFollow" : "mpUnFollow";
@@ -1715,6 +2031,11 @@ module RongIMLib {
          * @param  {string}            userId   [将被加入黑名单的用户Id]
          * @param  {OperationCallback} callback [返回值，函数回调]
          */
+        /* .en
+         * [add user to blacklist]
+         * @param  {string}            userId  
+         * @param  {OperationCallback} callback 
+         */
         addToBlacklist(userId: string, callback: OperationCallback) {
             CheckParam.getInstance().check(["string", "object"], "addToBlacklist");
             var modules = new Modules.Add2BlackListInput();
@@ -1732,6 +2053,10 @@ module RongIMLib {
          * [获取黑名单列表]
          * @param  {GetBlacklistCallback} callback [返回值，函数回调]
          */
+        /* .en
+         * [get blacklist]
+         * @param  {GetBlacklistCallback} callback 
+         */
         getBlacklist(callback: GetBlacklistCallback) {
             CheckParam.getInstance().check(["object"], "getBlacklist");
             var modules = new Modules.QueryBlackListInput();
@@ -1742,6 +2067,11 @@ module RongIMLib {
          * [得到指定人员再黑名单中的状态]
          * @param  {string}                          userId   [description]
          * @param  {ResultCallback<BlacklistStatus>} callback [返回值，函数回调]
+         */
+        /* .en
+         * [get status in blacklist wirh specified userid]
+         * @param  {string}                          userId   
+         * @param  {ResultCallback<BlacklistStatus>} callback 
          */
         //TODO 如果人员不在黑名单中，获取状态会出现异常
         getBlacklistStatus(userId: string, callback: ResultCallback<string>) {
@@ -1764,6 +2094,11 @@ module RongIMLib {
          * [将指定用户移除黑名单]
          * @param  {string}            userId   [将被移除的用户Id]
          * @param  {OperationCallback} callback [返回值，函数回调]
+         */
+        /* .en
+         * [remove from blacklist wirh specified userid]
+         * @param  {string}            userId   
+         * @param  {OperationCallback} callback 
          */
         removeFromBlacklist(userId: string, callback: OperationCallback) {
             CheckParam.getInstance().check(["string", "object"], "removeFromBlacklist");
@@ -1896,6 +2231,9 @@ module RongIMLib {
         }
         // # endVoIP
     }
+    /* .en
+     * Compatible with AMD and CMD
+    */
     //兼容AMD CMD
     if ("function" === typeof require && "object" === typeof module && module && module.id && "object" === typeof exports && exports) {
         module.exports = RongIMLib;

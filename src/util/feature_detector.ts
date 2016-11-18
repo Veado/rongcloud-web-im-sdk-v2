@@ -20,6 +20,9 @@ module RongIMLib {
         new FeatureDectector();
     } else if (document.addEventListener) {
         document.addEventListener("DOMContentLoaded", function() {
+            /* .en
+             * TODO replace callee
+            */
             //TODO 替换callee
             document.removeEventListener("DOMContentLoaded", <any>arguments.callee, false);
             new FeatureDectector();

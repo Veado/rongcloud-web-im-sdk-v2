@@ -16,6 +16,9 @@ module RongIMLib {
     /**
      * 客服转换响应消息的类型名
      */
+    /* .en
+     * type name of change mode response message
+    */
     export class ChangeModeResponseMessage implements MessageContent {
         messageName: string = "ChangeModeResponseMessage";
         code: number;
@@ -39,6 +42,10 @@ module RongIMLib {
      * 客服转换消息的类型名
      * 此消息不计入未读消息数
      */
+    /* .en
+     * type name of change mode message
+     * This message is not included in the number of unread messages
+    */
     export class ChangeModeMessage implements MessageContent {
         messageName: string = "ChangeModeMessage";
         uid: string;
@@ -130,9 +137,13 @@ module RongIMLib {
             return JSON.stringify(ModelUtil.modelClone(this));
         }
     }
+
     /**
      * 客服握手响应消息的类型名
      */
+    /* .en
+     * type name of HandShake response message
+    */
     export class HandShakeResponseMessage implements MessageContent {
         messageName: string = "HandShakeResponseMessage";
         msg: string;
@@ -171,6 +182,10 @@ module RongIMLib {
 
     export class TerminateMessage implements MessageContent {
         messageName: string = "TerminateMessage";
+        /* .en
+         * 0 end session
+         * 1 change to robot
+        */
         //0结束客服，1自动转为机器人。
         code: number;
         msg: string;

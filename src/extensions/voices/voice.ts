@@ -146,6 +146,9 @@ module RongIMLib {
         }
 
     }
+    /* .en
+     * Compatible with AMD and CMD
+    */
     //兼容AMD CMD
     if ("function" === typeof require && "object" === typeof module && module && module.id && "object" === typeof exports && exports) {
         module.exports = RongIMVoice;

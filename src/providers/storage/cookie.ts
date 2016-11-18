@@ -44,11 +44,17 @@ module RongIMLib {
             var keys = document.cookie.match(/[^ =;]+(?=\=)/g);
             if (keys) {
                 for (var i = keys.length; i--;) {
+                    /* .en
+                     * TODO Conditions for judgment, do not delete the user's own cookies
+                    */
                     //TODO 条件判断，不要删除用户自己的 cookie
                     document.cookie = keys[i] + "=0;path=/;expires=" + new Date(0).toUTCString();
                 }
             }
         }
+        /* .en
+         * unit : byte
+        */
         //单位：字节
         onOutOfQuota(): number {
             return 4 * 1024;
@@ -88,6 +94,9 @@ module RongIMLib {
                 delete me._memeoryStore[key];
             }
         }
+        /* .en
+         * unit : byte
+        */
         //单位：字节
         onOutOfQuota(): number {
             return 4 * 1024;
