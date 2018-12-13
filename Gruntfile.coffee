@@ -79,7 +79,7 @@ module.exports = (grunt) ->
           suppressImplicitAnyIndexErrors: false
           target: 'es3'
         src: './src/**/*.ts'
-        dest: './build'
+        dest: './miniprogram/build'
       release:
         options:
           module: 'amd'
