@@ -1,3 +1,7 @@
+var RongIMLib = require('./release/RongIMLib')
+
+console.log(RongIMLib)
+
 //app.js
 App({
   onLaunch: function () {

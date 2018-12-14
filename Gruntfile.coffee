@@ -22,11 +22,18 @@ module.exports = (grunt) ->
           './dist/.*'
           './dist/*.*'
         ]
+      miniprogram:
+        src: [
+          './miniprogram/release/*'
+        ]
 
     concat:
-      dist:
+      release:
         src: ['./src/exports/header.js','./src/internal/transportation/xhrpolling-min.js','./src/3rd/md5.min.js','./dist/RongIMLib.js','./src/exports/footer.js']
         dest: './dist/RongIMLib.js'
+      miniprogram: 
+        src: ['./src/exports/header.js','./src/internal/transportation/xhrpolling-min.js','./src/3rd/md5.min.js','./miniprogram/release/RongIMLib.js','./src/exports/footer.js']
+        dest: './miniprogram/release/RongIMLib.js'
 
     connect:
       server:
@@ -90,6 +97,16 @@ module.exports = (grunt) ->
           target: 'es3'
         src: ['./src/**/*.ts','!./src/extensions/*.ts','!./src/extensions/**/*.ts','!./src/util/script_loader.ts']
         dest: './dist/RongIMLib.js'
+      miniprogram:
+        options:
+          module: 'amd'
+          noImplicitAny: true
+          removeComments: false
+          sourceMap: false
+          suppressImplicitAnyIndexErrors: false
+          target: 'es3'
+        src: ['./src/**/*.ts','!./src/extensions/*.ts','!./src/extensions/**/*.ts','!./src/util/script_loader.ts']
+        dest: './miniprogram/release/RongIMLib.js'
 
   # These plugins provide necessary tasks.
   # grunt.loadNpmTasks 'google-closure-compiler'
@@ -114,8 +131,16 @@ module.exports = (grunt) ->
   grunt.registerTask 'release', [
     'clean:release'
     'typescript:release'
-    'concat'
+    'concat:release'
     'uglify:release'
     # 'typedoc:release'
     # 'jsdoc'
+  ]
+
+  # Build for miniprogram.
+  grunt.registerTask 'miniprogram', [
+    'clean:miniprogram'
+    'typescript:miniprogram'
+    'concat:miniprogram'
+    'watch'
   ]
