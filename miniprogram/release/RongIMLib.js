@@ -1947,14 +1947,14 @@ var RongIMLib;
             RongIMClient._instance = new RongIMClient();
             options = options || {};
             var protocol = "http://", wsScheme = 'ws://';
-            if (location.protocol == 'https:') {
-                wsScheme = 'wss://';
-                protocol = 'https://';
-            }
+            // if (location.protocol == 'https:') {
+            //     wsScheme = 'wss://';
+            //     protocol = 'https://';
+            // }
             var isPolling = false;
-            if (typeof WebSocket != 'function') {
-                isPolling = true;
-            }
+            // if(typeof WebSocket != 'function') {
+            //     isPolling = true;
+            // }
             var isIntegrity = function () {
                 //iOS 9 
                 var hasWS = (typeof WebSocket);
@@ -2053,7 +2053,7 @@ var RongIMLib;
             var sdkInfo = RongIMClient._dataAccessProvider.init(appKey, options);
             RongIMClient._memoryStore.sdkInfo = sdkInfo;
             // 兼容 c++ 设置导航，Web 端不生效
-            RongIMClient._dataAccessProvider.setServerInfo({ navi: location.protocol + options.navi + '/navi.xml' });
+            RongIMClient._dataAccessProvider.setServerInfo({ navi: protocol + options.navi + '/navi.xml' });
             RongIMClient.MessageParams = {
                 TextMessage: { objectName: "RC:TxtMsg", msgTag: new RongIMLib.MessageTag(true, true) },
                 ImageMessage: { objectName: "RC:ImgMsg", msgTag: new RongIMLib.MessageTag(true, true) },

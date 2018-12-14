@@ -81,15 +81,16 @@ module RongIMLib {
 
             options = options || {};
             var protocol: string = "http://", wsScheme = 'ws://';
-            if (location.protocol == 'https:') {
-                wsScheme = 'wss://';
-                protocol = 'https://';
-            }
+            
+            // if (location.protocol == 'https:') {
+            //     wsScheme = 'wss://';
+            //     protocol = 'https://';
+            // }
             
             var isPolling = false;
-            if(typeof WebSocket != 'function') {
-                isPolling = true;
-            }
+            // if(typeof WebSocket != 'function') {
+            //     isPolling = true;
+            // }
             var isIntegrity = function(){
                 //iOS 9 
                 var hasWS = (typeof WebSocket);
@@ -203,7 +204,7 @@ module RongIMLib {
             RongIMClient._memoryStore.sdkInfo = sdkInfo;
 
             // 兼容 c++ 设置导航，Web 端不生效
-            RongIMClient._dataAccessProvider.setServerInfo({navi: location.protocol + options.navi +'/navi.xml' });
+            RongIMClient._dataAccessProvider.setServerInfo({navi: protocol + options.navi +'/navi.xml' });
             RongIMClient.MessageParams = {
                 TextMessage: { objectName: "RC:TxtMsg", msgTag: new MessageTag(true, true) },
                 ImageMessage: { objectName: "RC:ImgMsg", msgTag: new MessageTag(true, true) },

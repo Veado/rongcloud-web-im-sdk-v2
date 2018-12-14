@@ -1,6 +1,8 @@
 var RongIMLib = require('./release/RongIMLib')
 
-console.log(RongIMLib)
+RongIMLib.RongIMClient.init("pkfcgjstpol38");
+
+
 
 //app.js
 App({
