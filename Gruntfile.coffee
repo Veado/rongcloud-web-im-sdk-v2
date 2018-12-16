@@ -53,7 +53,7 @@ module.exports = (grunt) ->
       options:
         spawn: false
         livereload: true
-      compile:
+      build:
         files: [
           './src/**/*.ts'
           './src/**/*.js'
@@ -61,6 +61,15 @@ module.exports = (grunt) ->
         tasks: [
           'clean:build'
           'typescript:build'
+        ]
+      miniprogram:
+        files: [
+          './src/**/*.ts'
+          './src/**/*.js'
+        ]
+        tasks: [
+          'clean:miniprogram'
+          'typescript:miniprogram'
         ]
 
     karma:
@@ -123,7 +132,7 @@ module.exports = (grunt) ->
   grunt.registerTask 'build', [
     'clean:build'
     'typescript:build'
-    'watch'
+    'watch:build'
   ]
 
   # grunt.registerTask 'default','mochaTest'
@@ -142,5 +151,5 @@ module.exports = (grunt) ->
     'clean:miniprogram'
     'typescript:miniprogram'
     'concat:miniprogram'
-    'watch'
+    'watch:miniprogram'
   ]
