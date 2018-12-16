@@ -1,3 +1,5 @@
+import getLocalStorage from './wxlocalstorage'
+
 module RongIMLib {
     export class LocalStorageProvider implements StorageProvider {
 
