@@ -1,5 +1,8 @@
+
 module RongIMLib {
+   
     export class LocalStorageProvider implements StorageProvider {
+        localStorage = getLocalStorage()
 
         prefix: string = 'rong_';
 

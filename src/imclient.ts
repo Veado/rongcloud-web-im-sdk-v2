@@ -80,8 +80,7 @@ module RongIMLib {
             RongIMClient._instance = new RongIMClient();
 
             options = options || {};
-            var protocol: string = "http://", wsScheme = 'ws://';
-            
+            var protocol: string = "https://", wsScheme = 'ws://';
             // if (location.protocol == 'https:') {
             //     wsScheme = 'wss://';
             //     protocol = 'https://';
@@ -91,28 +90,28 @@ module RongIMLib {
             // if(typeof WebSocket != 'function') {
             //     isPolling = true;
             // }
-            var isIntegrity = function(){
-                //iOS 9 
-                var hasWS = (typeof WebSocket);
-                var integrity = (typeof WebSocket.OPEN == 'number');
-                return (hasWS && integrity);
-            };
-            if (typeof WebSocket == 'object' && isIntegrity()) {
-                isPolling = false;
-            }
+            // var isIntegrity = function(){
+            //     //iOS 9 
+            //     var hasWS = (typeof WebSocket);
+            //     var integrity = (typeof WebSocket.OPEN == 'number');
+            //     return (hasWS && integrity);
+            // };
+            // if (typeof WebSocket == 'object' && isIntegrity()) {
+            //     isPolling = false;
+            // }
             var supportUserData = function(){
                 var element:any = document.documentElement;
                 return element.addBehavior;
             };
-            if (RongUtil.supportLocalStorage()) {
+            // if (RongUtil.supportLocalStorage()) {
                 RongIMClient._storageProvider = new RongIMLib.LocalStorageProvider();
-            }
-            else if (supportUserData()) {
-                RongIMClient._storageProvider = new RongIMLib.UserDataProvider();
-            }
-            else {
-                RongIMClient._storageProvider = new RongIMLib.MemeoryProvider();
-            }
+            // }
+            // else if (supportUserData()) {
+            //     RongIMClient._storageProvider = new RongIMLib.UserDataProvider();
+            // }
+            // else {
+            //     RongIMClient._storageProvider = new RongIMLib.MemeoryProvider();
+            // }
             var serverIndex = RongIMClient._storageProvider.getItem('serverIndex');
             RongIMClient.serverStore.index = serverIndex || 0;
             var pathTmpl = '{0}{1}';

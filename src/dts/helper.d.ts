@@ -1,3 +1,4 @@
+declare var wx: any;
 declare function md5(str: string, key?:string, raw?:string): any;
 declare var Modules: any;
 declare var require: any;

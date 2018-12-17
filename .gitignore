@@ -7,3 +7,4 @@ typings
 docs/**/*.*
 .DS_Store
 dist
+miniprogram/release/*
