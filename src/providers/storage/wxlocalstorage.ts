@@ -1,4 +1,4 @@
-namespace WxLocalStorage{
+module RongIMLib {
   interface WxLocalStorageInterface {
     length:number
     getItem(keyName:string): string | null
