@@ -54,6 +54,7 @@
       "./src/providers/data_access_provider.ts",
       "./src/providers/data_access/server.ts",
       "./src/providers/data_access/vc.ts",
+      "./src/providers/storage/wxlocalstorage.ts",
       "./src/providers/storage_provider.ts",
       "./src/providers/storage/cookie.ts",
       "./src/providers/storage/localstorage.ts",

@@ -2,7 +2,8 @@
 module RongIMLib {
    
     export class LocalStorageProvider implements StorageProvider {
-        localStorage = getLocalStorage()
+        // localStorage = new WxLocalStorage()
+        wxLocalStorage:any = new WxLocalStorage()
 
         prefix: string = 'rong_';
 
@@ -11,23 +12,24 @@ module RongIMLib {
         // static _instance: LocalStorageProvider = new LocalStorageProvider();
 
         constructor() {
+            console.log('wxLocalStorage', this.wxLocalStorage) 
             var d = new Date(), m = d.getMonth() + 1, date = d.getFullYear() + '/' + (m.toString().length == 1 ? '0' + m : m) + '/' + d.getDate(),
                 nowDate = new Date(date).getTime();
             for (var key in localStorage) {
                 if (key.lastIndexOf('RECEIVED') > -1) {
-                    var recObj = JSON.parse(localStorage.getItem(key));
+                    var recObj = JSON.parse(this.wxLocalStorage.getItem(key));
                     for (let key in recObj) {
                         nowDate - recObj[key].dealtime > 0 && (delete recObj[key]);
                     }
                     if (RongUtil.isEmpty(recObj)) {
-                        localStorage.removeItem(key);
+                        this.wxLocalStorage.removeItem(key);
                     } else {
-                        localStorage.setItem(key, JSON.stringify(recObj));
+                        this.wxLocalStorage.setItem(key, JSON.stringify(recObj));
                     }
                 }
                 if (key.lastIndexOf('SENT') > -1) {
-                    var sentObj = JSON.parse(localStorage.getItem(key));
-                    nowDate - sentObj.dealtime > 0 && (localStorage.removeItem(key));
+                    var sentObj = JSON.parse(this.wxLocalStorage.getItem(key));
+                    nowDate - sentObj.dealtime > 0 && (this.wxLocalStorage.removeItem(key));
                 }
             }
         }
@@ -35,14 +37,14 @@ module RongIMLib {
         setItem(composedKey: string, object: any): void {
             if (composedKey) {
                 composedKey.indexOf(this.prefix) == -1 && (composedKey = this.prefix + composedKey);
-                localStorage.setItem(composedKey, object);
+                this.wxLocalStorage.setItem(composedKey, object);
             }
         }
 
         getItem(composedKey: string): string {
             if (composedKey) {
                 composedKey.indexOf(this.prefix) == -1 && (composedKey = this.prefix + composedKey);
-                return localStorage.getItem(composedKey ? composedKey : "");
+                return this.wxLocalStorage.getItem(composedKey ? composedKey : "");
             }
             return "";
         }
@@ -62,7 +64,7 @@ module RongIMLib {
         removeItem(composedKey: string): void {
             if (composedKey) {
                 composedKey.indexOf(this.prefix) == -1 && (composedKey = this.prefix + composedKey);
-                localStorage.removeItem(composedKey.toString());
+                this.wxLocalStorage.removeItem(composedKey.toString());
             }
         }
 

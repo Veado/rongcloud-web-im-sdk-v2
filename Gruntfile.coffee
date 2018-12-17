@@ -70,6 +70,7 @@ module.exports = (grunt) ->
         tasks: [
           'clean:miniprogram'
           'typescript:miniprogram'
+          'concat:miniprogram'
         ]
 
     karma:

@@ -1,12 +1,13 @@
 module RongIMLib {
-  interface WxLocalStorageInterface {
-    length:number
-    getItem(keyName:string): string | null
+
+  export interface WxLocalStorageInterface {
+    length:number;
+    getItem(keyName:string): any 
     removeItem(keyName:string): void
     setItem(keyName:string, keyValue: any): void
   }
 
-  class WxLocalStorage implements WxLocalStorageInterface {
+  export class WxLocalStorage implements WxLocalStorageInterface {
     [index: string]: any 
     length: number
     constructor() {
@@ -18,7 +19,8 @@ module RongIMLib {
       this.length = keys.length
       
       for(let k in keys) {
-        this[k] = keys[k]
+        // console.log('k', k)
+        this[keys[k]] = wx.getStorageSync(keys[k]).toString()
       }
     }
 
@@ -47,9 +49,9 @@ module RongIMLib {
     }
   }
 
-  var wxLocalStorage = new WxLocalStorage()
+  // var wxLocalStorage:any = new WxLocalStorage()
   
-  export function getLocalStorage() {
-    return wxLocalStorage
-  }
+  // export function getLocalStorage():any {
+  //   return wxLocalStorage
+  // }
 }

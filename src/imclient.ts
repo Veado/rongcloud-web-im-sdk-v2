@@ -790,6 +790,8 @@ module RongIMLib {
          * @param callback  连接回调，返回连接的成功或者失败状态。
          */
         static connect(token: string, _callback: ConnectCallback, userId?: string, serverConf?:any): void {
+            console.log('call connect')
+            debugger
             CheckParam.getInstance().check(["string", "object", "string|null|object|global|undefined", "object|null|global|undefined"], "connect", true, arguments);
             var connectCallback = {
                 onSuccess: _callback.onSuccess,
