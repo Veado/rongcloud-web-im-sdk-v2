@@ -8,7 +8,7 @@ module RongIMLib {
             storage.removeItem('rongSDK');
         }
         constructor() {
-            window.getServerEndpoint = function(result: any) {
+            global.getServerEndpoint = function(result: any) {
                 var server = result.server;
                 if (server) {
                     server += ','
@@ -89,8 +89,8 @@ module RongIMLib {
             Navigation.clear();
             var StatusEvent = Channel._ConnectionStatusListener;
             StatusEvent.onChanged(ConnectionStatus.REQUEST_NAVI);
-            //导航信息，切换Url对象的key进行线上线下测试操作
-            var xss:any = document.createElement("script");
+            // 导航信息，切换Url对象的key进行线上线下测试操作
+            // var xss:any = document.createElement("script");
             //进行jsonp请求
             var depend = RongIMClient._memoryStore.depend;
             var domain = depend.navi;
@@ -108,18 +108,20 @@ module RongIMLib {
                 sdkver: sdkver,
                 random: random
             });
-            xss.src = url;
-            document.body.appendChild(xss);
-            xss.onerror = function() {
-                _onerror(ConnectionState.TOKEN_INCORRECT);
-            };
-            if ("onload" in xss) {
-                xss.onload = _onsuccess;
-            } else {
-                xss.onreadystatechange = function() {
-                    xss.readyState == "loaded" && _onsuccess();
-                };
-            }
+            console.log(url)
+            // xss.src = url;
+            // document.body.appendChild(xss);
+            
+            // xss.onerror = function() {
+            //     _onerror(ConnectionState.TOKEN_INCORRECT);
+            // };
+            // if ("onload" in xss) {
+            //     xss.onload = _onsuccess;
+            // } else {
+            //     xss.onreadystatechange = function() {
+            //         xss.readyState == "loaded" && _onsuccess();
+            //     };
+            // }
         }
     }
 }

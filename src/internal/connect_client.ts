@@ -589,9 +589,10 @@ module RongIMLib {
         }
         //连接服务器
         connect(appKey: string, token: string, callback: any): Client {
-            if (!RongIMClient.Protobuf) {
-                return;
-            }
+            // debugger
+            // if (!RongIMClient.Protobuf) {
+            //     return;
+            // }
             Bridge._client = new Navigation().connect(appKey, token, callback);
             return Bridge._client;
         }

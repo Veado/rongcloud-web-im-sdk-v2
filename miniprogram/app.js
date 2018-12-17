@@ -1,6 +1,5 @@
 
 var RongIMLib = require('./release/RongIMLib')
-
 require('./3rd/protobuf-2.3.3.min.js')
 
 //3_user  pkfcgjstpol38 GGY3izbPGsPhLvs9S11V3cXEnqil/lunxewlR/Kcs7ULDzunq04EdrXU2MYgU2eb9kqoAlshdzoX9f9wgiFuEA==

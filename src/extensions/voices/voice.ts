@@ -4,30 +4,30 @@ module RongIMLib {
         private static element: any = {};
         private static isInit: boolean = false;
         static init() {
-            if (this.notSupportH5) {
-                var div = document.createElement("div");
-                div.setAttribute("id", "flashContent");
-                document.body.appendChild(div);
-                var script = document.createElement("script");
-                script.src = (RongIMClient && RongIMClient._memoryStore && RongIMClient._memoryStore.depend && RongIMClient._memoryStore.depend.voiceSwfobjct) || "//cdn.ronghub.com/swfobject-2.0.0.min.js";
-                var header = document.getElementsByTagName("head")[0];
-                header.appendChild(script);
-                script.onload = script.onreadystatechange = function() {
-                    var swfVersionStr = "11.4.0";
-                    var flashvars = {};
-                    var params: any = {};
-                    params.quality = "high";
-                    params.bgcolor = "#ffffff";
-                    params.allowscriptaccess = "always";
-                    params.allowScriptAccess = "always";
-                    params.allowfullscreen = "true";
-                    var attributes: any = {};
-                    attributes.id = "player";
-                    attributes.name = "player";
-                    attributes.align = "middle";
-                    swfobject.embedSWF((RongIMClient && RongIMClient._memoryStore && RongIMClient._memoryStore.depend && RongIMClient._memoryStore.depend.voicePlaySwf) || "//cdn.ronghub.com/player-2.0.2.swf", "flashContent", "1", "1", swfVersionStr, null, flashvars, params, attributes);
-                };
-            } 
+            // if (this.notSupportH5) {
+            //     var div = document.createElement("div");
+            //     div.setAttribute("id", "flashContent");
+            //     document.body.appendChild(div);
+            //     var script = document.createElement("script");
+            //     script.src = (RongIMClient && RongIMClient._memoryStore && RongIMClient._memoryStore.depend && RongIMClient._memoryStore.depend.voiceSwfobjct) || "//cdn.ronghub.com/swfobject-2.0.0.min.js";
+            //     var header = document.getElementsByTagName("head")[0];
+            //     header.appendChild(script);
+            //     script.onload = script.onreadystatechange = function() {
+            //         var swfVersionStr = "11.4.0";
+            //         var flashvars = {};
+            //         var params: any = {};
+            //         params.quality = "high";
+            //         params.bgcolor = "#ffffff";
+            //         params.allowscriptaccess = "always";
+            //         params.allowScriptAccess = "always";
+            //         params.allowfullscreen = "true";
+            //         var attributes: any = {};
+            //         attributes.id = "player";
+            //         attributes.name = "player";
+            //         attributes.align = "middle";
+            //         swfobject.embedSWF((RongIMClient && RongIMClient._memoryStore && RongIMClient._memoryStore.depend && RongIMClient._memoryStore.depend.voicePlaySwf) || "//cdn.ronghub.com/player-2.0.2.swf", "flashContent", "1", "1", swfVersionStr, null, flashvars, params, attributes);
+            //     };
+            // } 
             this.isInit = true;
         }
 

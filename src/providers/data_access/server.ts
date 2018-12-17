@@ -11,7 +11,6 @@ module RongIMLib {
             RongIMClient.bridge = Bridge.getInstance();
             RongIMClient._memoryStore.token = token;
             RongIMClient._memoryStore.callback = callback;
-
             userId = userId || '';
             option = option || {};
 
