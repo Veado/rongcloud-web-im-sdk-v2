@@ -48,6 +48,7 @@ module RongIMLib {
         }
         connect(appId?: string, token?: string, callback?: any) {
             var oldAppId = RongIMClient._storageProvider.getItem("appId");
+            debugger
             //如果appid和本地存储的不一样，清空所有本地存储数据
             if (oldAppId && oldAppId != appId) {
                 RongIMClient._storageProvider.clearItem();
@@ -64,6 +65,7 @@ module RongIMLib {
             return client;
         }
         getServerEndpoint(token: string, appId: string, _onsuccess?: any, _onerror?: any, unignore?: any) {
+            // debugger
             if (unignore) {
                 //根据token生成MD5截取8-16下标的数据与本地存储的导航信息进行比对
                 //如果信息和上次的通道类型都一样，不执行navi请求，用本地存储的导航信息连接服务器
@@ -77,7 +79,7 @@ module RongIMLib {
                 var isSameUser = (_old == uId);
                 var servers = storage.getItem('servers');
                 var hasServers = (typeof servers == 'string')
-                
+                debugger
                 if (isSameUser && isSameType && hasServers) {
                     RongIMClient._memoryStore.voipStategy = storage.getItem("voipStrategy");
                     var openMp = storage.getItem('openMp' + uId);
@@ -125,3 +127,21 @@ module RongIMLib {
         }
     }
 }
+
+
+// var xss = document.createElement("script");
+// xss.src = 'https://nav.cn.ronghub.com/navi.js?appId=6tnym1br64d37&token=GGY3izbPGsPhLvs9S11V3cXEnqil%2FlunxewlR%2FKcs7ULDzunq04EdrXU2MYgU2eb9kqoAlshdzoX9f9wgiFuEA%3D%3D&callBack=getServerEndpoint&v=2.3.4&r=1545036217729'
+// document.body.appendChild(xss);
+// xss.onerror = function() {
+//         console.log('err')
+//     };
+//     if ("onload" in xss) {
+//         xss.onload = ggg;
+//     } else {
+//         xss.onreadystatechange = function() {
+//             xss.readyState == "loaded" && ggg();
+//         };
+//     }
+// function ggg(i) {
+//     console.log(i)
+// }

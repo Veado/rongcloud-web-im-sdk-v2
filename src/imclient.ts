@@ -804,6 +804,7 @@ module RongIMLib {
                     _callback.onError(errorCode);
                 }
             };
+            debugger
             RongIMClient._dataAccessProvider.connect(token, connectCallback, userId, serverConf);
         }
 

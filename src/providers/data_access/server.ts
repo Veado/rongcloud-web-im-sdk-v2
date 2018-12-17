@@ -37,6 +37,7 @@ module RongIMLib {
                 RongIMClient.bridge["setListener"](RongIMClient._memoryStore.listenerList[i]);
             }
             RongIMClient._memoryStore.listenerList.length = 0;
+            debugger
             RongIMClient.bridge.connect(RongIMClient._memoryStore.appKey, token, {
                 onSuccess: function(data: string) {
                     setTimeout(function() {
