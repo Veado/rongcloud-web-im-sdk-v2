@@ -593,6 +593,7 @@ module RongIMLib {
             // if (!RongIMClient.Protobuf) {
             //     return;
             // }
+            debugger
             Bridge._client = new Navigation().connect(appKey, token, callback);
             return Bridge._client;
         }

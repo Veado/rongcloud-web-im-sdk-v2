@@ -99,7 +99,7 @@ var _instance = RongIMLib.RongIMClient.getInstance();
 		}
 	});
 	
-	
+	debugger
 	//开始链接
 	RongIMLib.RongIMClient.connect(token, {
 		onSuccess: function(userId) {
