@@ -99,6 +99,17 @@ module RongIMLib {
                     var isFinished = false;
 
                     var clearHandler = function(){
+                        // for(var i = 0; i < timers.length; i++){
+                        //     var timer = timers[i];
+                        //     clearTimeout(timer);
+                        // }
+
+                        // for(var i = 0; i < elements.length; i++){
+                        //     var el = elements[i];
+                        //     document.body.removeChild(el);
+                        // }
+                        // timers.length = 0;
+                        // elements.length = 0;
                         for(var i = 0; i < timers.length; i++){
                             var timer = timers[i];
                             clearTimeout(timer);
@@ -106,7 +117,8 @@ module RongIMLib {
 
                         for(var i = 0; i < elements.length; i++){
                             var el = elements[i];
-                            document.body.removeChild(el);
+                            elements[i].abort()
+                            // document.body.removeChild(el);
                         }
                         timers.length = 0;
                         elements.length = 0;
@@ -115,24 +127,37 @@ module RongIMLib {
                     var request = function(config: any, callback: Function){
                         var url = config.url;
                         var time = config.time;
-
+                        debugger
                         if (isFinished) {
                             return;
                         }
                         var timer = setTimeout(function(){
-                            var xss:any = document.createElement("script");
-                            xss.src = url;
-                            document.body.appendChild(xss);
-                            xss.onload = function () {
-                                if (isFinished) {
-                                    return;
+                            var xss:any = wx.request({
+                                url: url,
+                                success: function() {
+                                    if (isFinished) {
+                                        return;
+                                    }
+                                    clearHandler();
+                                    isFinished = true;
+                                    totalTimer.pause();
+                                    // var url = url;
+                                    callback(url);
                                 }
-                                clearHandler();
-                                isFinished = true;
-                                totalTimer.pause();
-                                var url = xss.src;
-                                callback(url);
-                            };
+                            })
+                            // var xss:any = document.createElement("script");
+                            // xss.src = url;
+                            // document.body.appendChild(xss);
+                            // xss.onload = function () {
+                            //     if (isFinished) {
+                            //         return;
+                            //     }
+                            //     clearHandler();
+                            //     isFinished = true;
+                            //     totalTimer.pause();
+                            //     var url = xss.src;
+                            //     callback(url);
+                            // };
                             // 此处不处理 xss.onerror 15 秒不执行 onload 自动超时
 
                             elements.push(xss);
@@ -266,6 +291,7 @@ module RongIMLib {
                 if (url) {
                     this.currentURL = url;
                 }
+                debugger
                 this.socket.createTransport(url);
             }
             return this;

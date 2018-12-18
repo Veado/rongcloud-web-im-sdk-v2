@@ -34,8 +34,12 @@ module RongIMLib {
                 wsScheme: wsScheme,
                 url: url
             });
-            this.socket = new WebSocket(url);
-            this.socket.binaryType = "arraybuffer";
+            // this.socket = new WebSocket(url);
+            // this.socket.binaryType = "arraybuffer";
+            this.socket = wx.connectSocket({
+                url: url
+            })
+            
             this.addEvent();
             return this.socket;
         }

@@ -121,7 +121,11 @@ module RongIMLib {
                     data = data.substring(0, data.length-2)
                     var res = JSON.parse(data)
                     global.getServerEndpoint(res)
+                    _onsuccess();
                 },
+                fail: function(){
+                    _onerror(ConnectionState.TOKEN_INCORRECT);
+                }
             })
             // xss.src = url;
             // document.body.appendChild(xss);
