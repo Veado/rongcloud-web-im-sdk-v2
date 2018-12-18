@@ -21,7 +21,7 @@ module RongIMLib {
                     backupServer: backupServer
                 });
                 var storage = RongIMClient._storageProvider;
-
+                debugger
                 servers = servers.split(',');
                 storage.setItem('servers', JSON.stringify(servers));
 
@@ -111,6 +111,18 @@ module RongIMLib {
                 random: random
             });
             console.log(url)
+
+            wx.request({
+                url: url,
+                success: function(result:any) {
+                    let {data} = result
+                    var cb = 'getServerEndpoint('
+                    data = data.substring('getServerEndpoint('.length)
+                    data = data.substring(0, data.length-2)
+                    var res = JSON.parse(data)
+                    global.getServerEndpoint(res)
+                },
+            })
             // xss.src = url;
             // document.body.appendChild(xss);
             
@@ -145,3 +157,4 @@ module RongIMLib {
 // function ggg(i) {
 //     console.log(i)
 // }
+
